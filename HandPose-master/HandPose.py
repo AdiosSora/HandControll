@@ -8,7 +8,7 @@ import time
 from utils.detector_utils import WebcamVideoStream
 import datetime
 import argparse
-import os; 
+import os;
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 import keras
 import gui
@@ -44,16 +44,16 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
             # get region of interest
             res = detector_utils.get_box_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
                 scores, boxes, cap_params['im_width'], cap_params['im_height'], frame)
-            
-            # draw bounding boxes
+
+            #判定した手の範囲を表示
             detector_utils.draw_box_on_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
                 scores, boxes, cap_params['im_width'], cap_params['im_height'], frame)
-            
+
             # classify hand pose
             if res is not None:
                 class_res = classifier.classify(model, classification_graph, session, res)
-                inferences_q.put(class_res)       
-            
+                inferences_q.put(class_res)
+
             # add frame annotated with bounding box to queue
             cropped_output_q.put(res)
             output_q.put(frame)
@@ -142,10 +142,10 @@ if __name__ == '__main__':
     cap_params['num_hands_detect'] = args.num_hands
 
     print(cap_params, args)
-    
+
     # Count number of files to increment new example directory
     poses = []
-    _file = open("poses.txt", "r") 
+    _file = open("poses.txt", "r")
     lines = _file.readlines()
     for line in lines:
         line = line.strip()
@@ -180,7 +180,7 @@ if __name__ == '__main__':
         try:
             inferences = inferences_q.get_nowait()
         except Exception as e:
-            pass      
+            pass
 
         elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
         num_frames += 1
@@ -207,7 +207,7 @@ if __name__ == '__main__':
                     print("frames processed: ", index, "elapsed time: ",
                           elapsed_time, "fps: ", str(int(fps)))
 
-    
+
         # print("frame ",  index, num_frames, elapsed_time, fps)
 
         if (output_frame is not None):
