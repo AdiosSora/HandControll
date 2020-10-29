@@ -50,22 +50,19 @@ def load_inference_graph():
 # draw the detected bounding boxes on the images
 # You can modify this to also draw a label.
 def draw_box_on_image(num_hands_detect, score_thresh, scores, boxes, im_width, im_height, image_np):
+    p3[0,1] = 0
     for i in range(num_hands_detect):
+        #手が一定の判定地を超えると実行
         if (scores[i] > score_thresh):
             (left, right, top, bottom) = (boxes[i][1] * im_width, boxes[i][3] * im_width,
                                           boxes[i][0] * im_height, boxes[i][2] * im_height)
-            p1 = (int(left), int(top))
-            p2 = (int(right), int(bottom))
-            #print(left)
-            #print(top)
-            #print(right)
-            #print(bottom)
+            #p1 = (int(left), int(top))
+            #p2 = (int(right), int(bottom))
 
-            p3 = ((int(left)+((int(right)-int(left))//2)),(int(top)+((int(bottom)-int(top))//2)))
-            p4 = ((int(left)+((int(right)-int(left))//2))+1,(int(top)+((int(bottom)-int(top))//2))+1)
-
-            pyautogui.moveTo((int(left)+((int(right)-int(left))//2)),(int(top)+((int(bottom)-int(top))//2)))
-            cv2.rectangle(image_np, p3, p4, (77, 255, 9), 3, 1)
+            p3[0] = (int(left)+((int(right)-int(left))//2))
+            p3[1] = (int(top)+((int(bottom)-int(top))//2))
+    pyautogui.moveTo(p3)
+    cv2.rectangle(image_np, (p3[0],, p3[1], (77, 255, 9), 1, 1)
 
 def get_box_image(num_hands_detect, score_thresh, scores, boxes, im_width, im_height, image_np):
     for i in range(num_hands_detect):
