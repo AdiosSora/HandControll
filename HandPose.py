@@ -18,6 +18,8 @@ score_thresh = 0.18
 
 # Create a worker thread that loads graph and
 # does detection on images in an input queue and puts it on an output queue
+#グラフをロードするワーカースレッドを作成し、
+#入力キュー内の画像を検出し、出力キューに配置します
 
 
 def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed):
@@ -38,10 +40,14 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
             # Actual detection. Variable boxes contains the bounding box cordinates for hands detected,
             # while scores contains the confidence for each of these boxes.
             # Hint: If len(boxes) > 1 , you may assume you have found atleast one hand (within your score threshold)
+            #実際の検出。 変数ボックスには、検出された手の境界ボックスの座標が含まれています。
+            #スコアには、これらの各ボックスの信頼度が含まれています。
+            #ヒント：len（boxes）> 1の場合、（スコアのしきい値内で）少なくとも片方の手を見つけたと見なすことができます。
             boxes, scores = detector_utils.detect_objects(
                 frame, detection_graph, sess)
 
             # get region of interest
+            #関心領域を取得
             res = detector_utils.get_box_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
                 scores, boxes, cap_params['im_width'], cap_params['im_height'], frame)
 
@@ -50,11 +56,13 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 scores, boxes, cap_params['im_width'], cap_params['im_height'], frame)
 
             # classify hand pose
+            #手のポーズを分類する
             if res is not None:
                 class_res = classifier.classify(model, classification_graph, session, res)
                 inferences_q.put(class_res)
 
             # add frame annotated with bounding box to queue
+            #バウンディングボックスで注釈が付けられたフレームをキューに追加
             cropped_output_q.put(res)
             output_q.put(frame)
             frame_processed += 1
@@ -139,11 +147,13 @@ if __name__ == '__main__':
     cap_params['score_thresh'] = score_thresh
 
     # max number of hands we want to detect/track
+    #検出/追跡する手の最大数
     cap_params['num_hands_detect'] = args.num_hands
 
     print(cap_params, args)
 
     # Count number of files to increment new example directory
+    #新しいサンプルディレクトリをインクリメントするファイルの数を数える
     poses = []
     _file = open("poses.txt", "r")
     lines = _file.readlines()
@@ -155,6 +165,7 @@ if __name__ == '__main__':
 
 
     # spin up workers to paralleize detection.
+    #ワーカーをスピンアップして検出を並列化します。
     pool = Pool(args.num_workers, worker,
                 (input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed))
 
@@ -187,6 +198,7 @@ if __name__ == '__main__':
         fps = num_frames / elapsed_time
 
         # Display inferences
+        #推論を表示する
         if(inferences is not None):
             gui.drawInferences(inferences, poses)
 

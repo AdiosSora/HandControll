@@ -49,6 +49,8 @@ def load_inference_graph():
 
 # draw the detected bounding boxes on the images
 # You can modify this to also draw a label.
+#検出された境界ボックスを画像に描画します
+#これを変更して、ラベルを描画することもできます。
 def draw_box_on_image(num_hands_detect, score_thresh, scores, boxes, im_width, im_height, image_np):
     p3[0,1] = 0
     for i in range(num_hands_detect):
@@ -82,6 +84,7 @@ def draw_fps_on_image(fps, image_np):
 
 
 # Actual detection .. generate scores and bounding boxes given an image
+#実際の検出..画像を指定してスコアとバウンディングボックスを生成する
 def detect_objects(image_np, detection_graph, sess):
     # Definite input and output Tensors for detection_graph
     image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
@@ -109,6 +112,9 @@ def detect_objects(image_np, detection_graph, sess):
 # Code to thread reading camera input.
 # Source : Adrian Rosebrock
 # https://www.pyimagesearch.com/2017/02/06/faster-video-file-fps-with-cv2-videocapture-and-opencv/
+#カメラ入力を読み取るスレッドへのコード。
+#出典：エイドリアンローズブロック
+#https：//www.pyimagesearch.com/2017/02/06/faster-video-file-fps-with-cv2-videocapture-and-opencv/
 class WebcamVideoStream:
     def __init__(self, src, width, height):
         # initialize the video camera stream and read the first frame
