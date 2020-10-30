@@ -1,0 +1,6 @@
+1.requirements.txtの内容をインストールする
+＜方法＞
+py -m pip install -r requirements.txt
+2.autopyのインストール
+＜方法＞
+py -m easy_install autopy
