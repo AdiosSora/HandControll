@@ -57,15 +57,18 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 (left, right, top, bottom) = (boxes[0][1] * cap_params['im_width'], boxes[0][3] * cap_params['im_width'],
                                               boxes[0][0] * cap_params['im_height'], boxes[0][2] * cap_params['im_height'])
 
-                p1 = (int(left)+((int(right)-int(left))//2))
-                p2 = (int(top)+((int(bottom)-int(top))//2))
+                #ウィンドウサイズを取得
+                width,height = autopy.screen.size()
+
+                wx = width // cap_params['im_width']
+                hx = height // cap_params['im_height']
+
+                p1 = (int(left)+((int(right)-int(left))//2))*wx
+                p2 = (int(top)+((int(bottom)-int(top))//2))*hx
                 #判定した手の範囲を表示
                 fp = (int(left),int(top))
                 ep = (int(right),int(bottom))
                 cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
-
-                #ウィンドウサイズを取得
-                width,height = autopy.screen.get_size()
                 #マウス操作
                 autopy.mouse.move(p1,p2)
 
