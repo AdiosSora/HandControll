@@ -13,7 +13,6 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 import keras
 import gui
 import autopy
-from win32api import GetSystemMetrics
 
 frame_processed = 0
 score_thresh = 0.18
