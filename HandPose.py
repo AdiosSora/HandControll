@@ -13,6 +13,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 import keras
 import gui
 import autopy
+from win32api import GetSystemMetrics
 
 frame_processed = 0
 score_thresh = 0.18
@@ -52,16 +53,22 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
             res = detector_utils.get_box_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
                 scores, boxes, cap_params['im_width'], cap_params['im_height'], frame)
 
+            #手の判定が一定値を超えたとき
             if (scores[0] > score_thresh):
                 (left, right, top, bottom) = (boxes[0][1] * cap_params['im_width'], boxes[0][3] * cap_params['im_width'],
                                               boxes[0][0] * cap_params['im_height'], boxes[0][2] * cap_params['im_height'])
 
-                p1 = ((int(left)+((int(right)-int(left))//2)),(int(top)+((int(bottom)-int(top))//2)))
+                p1 = (int(left)+((int(right)-int(left))//2))
+                p2 = (int(top)+((int(bottom)-int(top))//2))
                 #判定した手の範囲を表示
                 fp = (int(left),int(top))
                 ep = (int(right),int(bottom))
                 cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
-                autopy.mouse.move(p1)
+
+                #ウィンドウサイズを取得
+                width,height = autopy.screen.get_size()
+                #マウス操作
+                autopy.mouse.move(p1,p2)
 
             # classify hand pose
             #手のポーズを分類する
