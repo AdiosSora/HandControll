@@ -1,2 +1,1 @@
 py HandPose.py
-pause
