@@ -20,13 +20,16 @@ autopy.mouse.move(0, 520)
 
 #ドラッグアンドドロップ
 #押し続ける
-#
-autopy.mouse.toggle(None,True)
+autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
 #time.sleep(2)
-autopy.mouse.smooth_move(900,10,0.55)
+autopy.mouse.smooth_move(0,800,1)
+
+#autopy.mouse.smooth_move(900,10,1)
 #離す
 autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
-
+# time.sleep(0.5)
+# autopy.mouse.toggle(None,True)
+# autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
 
 
 
@@ -50,4 +53,4 @@ autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
 #         time.sleep(random.uniform(0.001, 0.003))
 #
 #
-# sine_mouse_wave()a
+# sine_mouse_wave()

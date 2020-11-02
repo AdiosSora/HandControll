@@ -3,7 +3,6 @@ import numpy as np
 import sys
 import tensorflow as tf
 import os
-import pyautogui
 from threading import Thread
 from datetime import datetime
 import cv2
