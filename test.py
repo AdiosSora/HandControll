@@ -9,10 +9,24 @@ width, height = autopy.screen.size()
 print(width)
 print("\n")
 print(height)
+#マウスの位置取得
 print(autopy.mouse.location())
-autopy.mouse.move(524, 644)
+#マウス移動
+autopy.mouse.move(0, 520)
+# autopy.mouse.smooth_move(0, 900)
 
-autopy.mouse.click()
+#クリック
+#autopy.mouse.click(autopy.mouse.Button.RIGHT)
+
+#ドラッグアンドドロップ
+#押し続ける
+#
+autopy.mouse.toggle(None,True)
+#time.sleep(2)
+autopy.mouse.smooth_move(900,10,0.55)
+#離す
+autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+
 
 
 
