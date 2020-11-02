@@ -47,6 +47,9 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
             boxes, scores = detector_utils.detect_objects(
                 frame, detection_graph, sess)
 
+            cv2.rectangle(frame, (int(cap_params['im_width'])//20,int(cap_params['im_height'])//20),
+                        (int(cap_params['im_width'])-(int(cap_params['im_width'])//20),int(cap_params['im_height'])-(int(cap_params['im_height'])//20)),
+                        (255, 9, 1), 1, 1)
             # get region of interest
             #関心領域を取得
             res = detector_utils.get_box_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
@@ -60,21 +63,20 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 #ウィンドウサイズを取得
                 width,height = autopy.screen.size()
 
-                wxx = width / cap_params['im_width']
-                hxx = height / cap_params['im_height']
+                #画面比率変数設定
+                wx = (width + ((int(right)-int(left)))*(width / cap_params['im_width'])) / cap_params['im_width']
+                hx = (height + ((int(bottom)-int(top)))*(height / cap_params['im_height'])) / cap_params['im_height']
 
-                wx = (width + ((int(right)-int(left)))*wxx) / cap_params['im_width']
-                hx = (height + ((int(bottom)-int(top)))*hxx) / cap_params['im_height']
-
-                p1 = (int(left)+((int(right)-int(left))//2))*wx
-                p2 = (int(top)+((int(bottom)-int(top))//2))*hx
+                #手の判定サイズの中点を変数へ設定
+                p1 = ((int(left)+((int(right)-int(left))//2))*wx)-(int(left)+((int(right)-int(left))//2))
+                p2 = ((int(top)+((int(bottom)-int(top))//2))*hx)-(int(top)+((int(bottom)-int(top))//2))
 
                 #判定した手の範囲を表示
                 fp = (int(left),int(top))
                 ep = (int(right),int(bottom))
                 cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
                 #マウス操作
-                autopy.mouse.move(int(left)*wx,int(top)*hx)
+                autopy.mouse.move(p1,p2)
 
             # classify hand pose
             #手のポーズを分類する
@@ -229,6 +231,7 @@ if __name__ == '__main__':
                 cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
                 cv2.resizeWindow('Cropped', 450, 300)
                 cv2.imshow('Cropped', cropped_output)
+
                 #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
