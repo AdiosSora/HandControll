@@ -76,7 +76,10 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 ep = (int(right),int(bottom))
                 cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
                 #マウス操作
-                autopy.mouse.move(p1,p2)
+                try:
+                    autopy.mouse.move(p1,p2)
+                except ValueError:
+                    print('Out of bounds')
 
             # classify hand pose
             #手のポーズを分類する
@@ -95,8 +98,9 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
 
 
 if __name__ == '__main__':
-
+    #パーサを作る
     parser = argparse.ArgumentParser()
+
     parser.add_argument(
         '-src',
         '--source',
@@ -104,6 +108,7 @@ if __name__ == '__main__':
         type=int,
         default=0,
         help='Device index of the camera.')
+
     parser.add_argument(
         '-nhands',
         '--num_hands',

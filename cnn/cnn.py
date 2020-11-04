@@ -62,7 +62,7 @@ def train():
     model.add(Flatten())
     # fully connected to get all relevant data
     model.add(Dense(128, activation='relu'))
-    # one more dropout for convergence' sake :) 
+    # one more dropout for convergence' sake :)
     model.add(Dropout(0.5))
     # output a softmax to squash the matrix into output probabilities
     model.add(Dense(num_classes, activation='softmax'))

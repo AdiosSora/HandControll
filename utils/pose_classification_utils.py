@@ -5,7 +5,7 @@ import tensorflow as tf
 import os; os.environ['KERAS_BACKEND'] = 'tensorflow'
 import keras
 
-def load_KerasGraph(path): 
+def load_KerasGraph(path):
     print("> ====== loading Keras model for classification")
     thread_graph = Graph()
     with thread_graph.as_default():
@@ -34,7 +34,7 @@ def classify(model, graph, sess, im):
         with sess.as_default():
             prediction= model.predict(res)
 
-    return prediction[0] 
+    return prediction[0]
 
 def test_classify(model, im):
     im = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
@@ -61,26 +61,6 @@ if __name__ == "__main__":
         model = keras.models.load_model("cnn/models/hand_poses_win_wGarbage_10.h5")
     except Exception as e:
         print(e)
-
-    # Fist
-    print('<< FIST >>')
-    im = cv2.imread("Poses/Fist/Fist_1/Fist_1_1302.png")
-    print(test_classify(model, im))
-
-    # Dang
-    print('<< DANG >>')
-    im = cv2.imread("Poses/Dang/Dang_1/Dang_1_1223.png")
-    print(test_classify(model, im))
-
-    # Four
-    print('<< FOUR >>')
-    im = cv2.imread("Poses/Four/Four_1/Four_1_867.png")
-    print(test_classify(model, im))
-    
-    # Startrek
-    print('<< Startrek >>')
-    im = cv2.imread("Poses/Startrek/Startrek_1/Startrek_1_867.png")
-    print(test_classify(model, im))
 
     # Palm
     print('<< Palm >>')
