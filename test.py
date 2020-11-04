@@ -12,7 +12,9 @@ print(height)
 #マウスの位置取得
 print(autopy.mouse.location())
 #マウス移動
-autopy.mouse.move(0, 520)
+autopy.mouse.move(10, 520)
+autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
+autopy.mouse.move(14, 524)
 # autopy.mouse.smooth_move(0, 900)
 
 #クリック
@@ -20,9 +22,10 @@ autopy.mouse.move(0, 520)
 
 #ドラッグアンドドロップ
 #押し続ける
-autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
-#time.sleep(2)
-autopy.mouse.smooth_move(0,800,1)
+#autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
+#ディレイ０．０３２が限界
+time.sleep(0.032)
+autopy.mouse.move(800,800)
 
 #autopy.mouse.smooth_move(900,10,1)
 #離す
