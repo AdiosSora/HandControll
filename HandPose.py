@@ -13,6 +13,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 import keras
 import gui
 import autopy
+import time
 
 frame_processed = 0
 score_thresh = 0.18
@@ -101,6 +102,7 @@ if __name__ == '__main__':
     #パーサを作る
     parser = argparse.ArgumentParser()
 
+    #Webカメラの選択
     parser.add_argument(
         '-src',
         '--source',
@@ -109,6 +111,7 @@ if __name__ == '__main__':
         default=0,
         help='Device index of the camera.')
 
+    #手を識別する数
     parser.add_argument(
         '-nhands',
         '--num_hands',
@@ -116,6 +119,8 @@ if __name__ == '__main__':
         type=int,
         default=1,
         help='Max number of hands to detect.')
+
+    #FPSを表示するか
     parser.add_argument(
         '-fps',
         '--fps',
@@ -123,6 +128,8 @@ if __name__ == '__main__':
         type=int,
         default=1,
         help='Show FPS on detection/display visualization')
+
+    #ビデオストリームの横幅
     parser.add_argument(
         '-wd',
         '--width',
@@ -130,6 +137,8 @@ if __name__ == '__main__':
         type=int,
         default=300,
         help='Width of the frames in the video stream.')
+
+    #ビデオストリームの高さ
     parser.add_argument(
         '-ht',
         '--height',
@@ -137,6 +146,8 @@ if __name__ == '__main__':
         type=int,
         default=200,
         help='Height of the frames in the video stream.')
+
+    #OpenCVでのFPSの表示をするか否か
     parser.add_argument(
         '-ds',
         '--display',
@@ -144,6 +155,8 @@ if __name__ == '__main__':
         type=int,
         default=1,
         help='Display the detected images using OpenCV. This reduces FPS')
+
+    #???
     parser.add_argument(
         '-num-w',
         '--num-workers',
@@ -151,6 +164,8 @@ if __name__ == '__main__':
         type=int,
         default=4,
         help='Number of workers.')
+
+    #???
     parser.add_argument(
         '-q-size',
         '--queue-size',
@@ -158,13 +173,17 @@ if __name__ == '__main__':
         type=int,
         default=5,
         help='Size of the queue.')
+
+    #設定項目を変数argsに代入する。
     args = parser.parse_args()
 
+    #各Queue変数の要素数の上限を設定
     input_q             = Queue(maxsize=args.queue_size)
     output_q            = Queue(maxsize=args.queue_size)
     cropped_output_q    = Queue(maxsize=args.queue_size)
     inferences_q        = Queue(maxsize=args.queue_size)
 
+    #初期設定したargsパーサーからWebカメラの指定及びサイズを取得
     video_capture = WebcamVideoStream(
         src=args.video_source, width=args.width, height=args.height).start()
 
