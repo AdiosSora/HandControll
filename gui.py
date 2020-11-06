@@ -3,8 +3,8 @@ import numpy as np
 from random import randint
 import autopy
 
-def drawInferences(values, names=['', '', '', '']):
-    nb_classes              = 4
+def drawInferences(values, names=['', '', '', '', '']):
+    nb_classes              = 5
     left_margin             = 150
     margin                  = 50
     thickness               = 40
