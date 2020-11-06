@@ -254,26 +254,36 @@ if __name__ == '__main__':
             poses.append(line)
 
 
-    # spin up workers to paralleize detection.
-    #ワーカーをスピンアップして検出を並列化します。
+    #Pool関数でワーカーを並列実行し、引数を渡す。
     pool = Pool(args.num_workers, worker,
                 (input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed))
 
+    #現在時刻を取得
     start_time = datetime.datetime.now()
+    #フレーム数初期化
     num_frames = 0
+    #FPS値初期化
     fps = 0
     index = 0
 
+    #ウィンドウを作成(ユーザーがウィンドウサイズ指定可能)
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
 
+    #終了ボタンが押されるまでループ
     while True:
+        #読み込んだ一番最新のフレームをframe関数に代入
         frame = video_capture.read()
+        #フレームを左右反転
         frame = cv2.flip(frame, 1)
+        #index変数をインクリメントする
         index += 1
-
+        #BGRからRGBへframeの画像を変換し、input_qへ追加
         input_q.put(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
+        #Worker関数から出力された output_qからoputput_frameに代入
         output_frame = output_q.get()
+
+        #Worker関数から出力された cropped_output_qからcropped_outputに代入
         cropped_output = cropped_output_q.get()
 
         inferences      = None
