@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 from random import randint
 
-def drawInferences(values, names=['', '', '', '']):
-    nb_classes              = 4
+def drawInferences(values, names=['', '', '', '', '']):
+    nb_classes              = 5
     left_margin             = 150
     margin                  = 50
     thickness               = 40
@@ -29,8 +29,8 @@ def drawInferences(values, names=['', '', '', '']):
     cv2.imshow("Inferences", blank)
 
 def test():
-    values = [0.2, 0.3, 0.2,0.2]
-    names = ['Garbage','Palm','Rock','Ok']
+    values = [0.2,0.2, 0.3, 0.2,0.2]
+    names = ['Daigo','Garbage','Palm','Rock','Ok']
     while(True):
         for i in range(len(values)):
             values[i] = randint(0, 100)/100
