@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from random import randint
+import autopy
 
 def drawInferences(values, names=['', '', '', '', '']):
     nb_classes              = 5
@@ -21,6 +22,8 @@ def drawInferences(values, names=['', '', '', '', '']):
     for i in range(nb_classes):
         if(values[i] > 0.7):
             cv2.rectangle(blank, (left_margin, margin + int(margin*i)), (left_margin + int(values[i]*200), margin + thickness + int(margin*i)), (0,255,0), -1)
+            #if(values[2] > 0.7):
+                #autopy.mouse.click(autopy.mouse.Button.RIGHT)
         else:
             cv2.rectangle(blank, (left_margin, margin + int(margin*i)), (left_margin + int(values[i]*200), margin + thickness + int(margin*i)), (255,255,255), -1)
         cv2.putText(blank, names[i], (0, margin + int(margin*i) + int(thickness/2)), font, fontScale, fontColor, lineType)
