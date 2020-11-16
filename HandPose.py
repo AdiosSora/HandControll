@@ -286,52 +286,70 @@ if __name__ == '__main__':
         #Worker関数から出力された cropped_output_qからcropped_outputに代入
         cropped_output = cropped_output_q.get()
 
+        #inferences変数初期化
         inferences      = None
 
+
         try:
+            #キューの内容を変数に代入しキューから要素を削除
             inferences = inferences_q.get_nowait()
+            # print(inferences)
+            #例外を無視
         except Exception as e:
             pass
 
+        #フレームレート計算
         elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
         num_frames += 1
         fps = num_frames / elapsed_time
 
+
         # Display inferences
         #推論を表示する
+        #手のポーズとその予想を表示
         if(inferences is not None):
             gui.drawInferences(inferences, poses)
 
-        if (cropped_output is not None):
-            cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
-            if (args.display > 0):
-                cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
-                cv2.resizeWindow('Cropped', 450, 300)
-                cv2.imshow('Cropped', cropped_output)
+        #認識した手を切り取り別ウィンドウで表示
+
+        # if (cropped_output is not None):
+        #     #print(cropped_output)
+        #     cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
+        #     if (args.display > 0):
+        #         cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
+        #         cv2.resizeWindow('Cropped', 450, 300)
+        #         cv2.imshow('Cropped', cropped_output)
 
                 #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-            else:
-                if (num_frames == 400):
-                    num_frames = 0
-                    start_time = datetime.datetime.now()
-                else:
-                    print("frames processed: ", index, "elapsed time: ",
-                          elapsed_time, "fps: ", str(int(fps)))
+            #     if cv2.waitKey(1) & 0xFF == ord('q'):
+            #         break
+            # else:
+            #     if (num_frames == 400):
+            #         num_frames = 0
+            #         start_time = datetime.datetime.now()
+            #     else:
+            #         print("frames processed: ", index, "elapsed time: ",
+            #               elapsed_time, "fps: ", str(int(fps)))
 
 
         # print("frame ",  index, num_frames, elapsed_time, fps)
 
+        #FPSをwindowに表示する
         if (output_frame is not None):
+            print(output_frame)
             output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
             if (args.display > 0):
                 if (args.fps > 0):
                     detector_utils.draw_fps_on_image("FPS : " + str(int(fps)),
                                                      output_frame)
+
+                #画像ファイルを読み込む　imshow(読み込む画像、画像の読み込み方法指定)
                 cv2.imshow('Handpose', output_frame)
+
+                #qキーが入力されたとき終了させる
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
+
             else:
                 if (num_frames == 400):
                     num_frames = 0
@@ -342,9 +360,12 @@ if __name__ == '__main__':
         else:
             print("video end")
             break
+    #fps値を計算し出力
     elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
     fps = num_frames / elapsed_time
     print("fps", fps)
+    #実行中の処理を完了させずにワーカープロセスをすぐに停止
     pool.terminate()
+    #終了処理
     video_capture.stop()
     cv2.destroyAllWindows()
