@@ -336,7 +336,7 @@ if __name__ == '__main__':
 
         #FPSをwindowに表示する
         if (output_frame is not None):
-            print(output_frame)
+            #print(output_frame)
             output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
             if (args.display > 0):
                 if (args.fps > 0):
