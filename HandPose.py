@@ -35,6 +35,11 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
     except Exception as e:
         print(e)
 
+    p1 = 0
+    p2 = 0
+    p3 = 0
+    p4 = 0
+
     while True:
         #print("> ===== in worker loop, frame ", frame_processed)
         frame = input_q.get()
@@ -78,9 +83,39 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
                 #マウス操作
                 try:
-                    autopy.mouse.move(p1,p2)
+                    p5 = 0
+                    p6 = 0
+                    p7 = p1
+                    p8 = p2
+                    for i in range(3):
+                        if p3 != 0 and p4 != 0:
+                            if p3 > p1:
+                                p5 = (p3-p1)/2+p1
+                                if p4 > p2:
+                                    p6 = (p4-p2)/2+p2
+                                elif p4 < p2:
+                                    p6 = (p2-p4)/2+p4
+                                else:
+                                    p6 = p2
+                            elif p3 < p1:
+                                p5 = (p1-p3)/2+p3
+                                if p4 > p2:
+                                    p6 = (p4-p2)/2+p2
+                                elif p4 < p2:
+                                    p6 = (p2-p4)/2+p4
+                                else:
+                                    p6 = p2
+                            else: p5 = p1
+                            p1 = p5
+                            p2 = p6
+                        autopy.mouse.move(p5,p6)
+                    autopy.mouse.move(p7,p8)
+                    p3 = p1
+                    p4 = p2
                 except ValueError:
                     print('Out of bounds')
+                p3 = p1
+                p4 = p2
 
             # classify hand pose
             #手のポーズを分類する
@@ -165,7 +200,7 @@ if __name__ == '__main__':
         default=4,
         help='Number of workers.')
 
-    #???
+    #FIFO Queueの最大サイズ
     parser.add_argument(
         '-q-size',
         '--queue-size',
@@ -189,21 +224,29 @@ if __name__ == '__main__':
 
     cap_params = {}
     frame_processed = 0
+
+    #キャプチャーしたビデオの縦幅、横幅をcap_params配列に代入
     cap_params['im_width'], cap_params['im_height'] = video_capture.size()
     print(cap_params['im_width'], cap_params['im_height'])
+
+    #手の信頼地をcap_params配列に代入
     cap_params['score_thresh'] = score_thresh
 
-    # max number of hands we want to detect/track
     #検出/追跡する手の最大数
     cap_params['num_hands_detect'] = args.num_hands
 
     print(cap_params, args)
 
-    # Count number of files to increment new example directory
-    #新しいサンプルディレクトリをインクリメントするファイルの数を数える
+    #ポーズサンプル配列を定義
     poses = []
+
+    #テキストファイルを開く
     _file = open("poses.txt", "r")
+
+    #テキストファイルを行ごとに分けて代入する。
     lines = _file.readlines()
+
+    #テキストファイルの行分ループし、poses配列にポーズ名を追加
     for line in lines:
         line = line.strip()
         if(line != ""):
@@ -211,26 +254,36 @@ if __name__ == '__main__':
             poses.append(line)
 
 
-    # spin up workers to paralleize detection.
-    #ワーカーをスピンアップして検出を並列化します。
+    #Pool関数でワーカーを並列実行し、引数を渡す。
     pool = Pool(args.num_workers, worker,
                 (input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed))
 
+    #現在時刻を取得
     start_time = datetime.datetime.now()
+    #フレーム数初期化
     num_frames = 0
+    #FPS値初期化
     fps = 0
     index = 0
 
+    #ウィンドウを作成(ユーザーがウィンドウサイズ指定可能)
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
 
+    #終了ボタンが押されるまでループ
     while True:
+        #読み込んだ一番最新のフレームをframe関数に代入
         frame = video_capture.read()
+        #フレームを左右反転
         frame = cv2.flip(frame, 1)
+        #index変数をインクリメントする
         index += 1
-
+        #BGRからRGBへframeの画像を変換し、input_qへ追加
         input_q.put(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
+        #Worker関数から出力された output_qからoputput_frameに代入
         output_frame = output_q.get()
+
+        #Worker関数から出力された cropped_output_qからcropped_outputに代入
         cropped_output = cropped_output_q.get()
 
         inferences      = None
