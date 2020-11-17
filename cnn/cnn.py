@@ -19,9 +19,11 @@ def train():
     model_name = "cnn/models/hand_poses_wGarbage_" + str(epochs) + ".h5"
 
     # input image dimensions
+    #入力画像の寸法
     img_rows, img_cols = 28, 28
 
     # the data, shuffled and split between train and test sets
+    #列車とテストセット間でシャッフルおよび分割されたデータ
     x_train, y_train, x_test, y_test = dataset.load_data(poses=["all"])
 
     num_classes = len(np.unique(y_test))
@@ -40,33 +42,45 @@ def train():
     print(x_test.shape[0], 'test samples')
 
     # convert class vectors to binary class matrices
+    #クラスベクトルをバイナリクラス行列に変換する
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
 
     ####### Model structure #######
     #model building
+    #モデル構築
     model = Sequential()
     #convolutional layer with rectified linear unit activation
+    #正規化線形ユニットアクティベーションを使用した畳み込み層
     model.add(Conv2D(32, kernel_size=(3, 3),
                     activation='relu',
                     input_shape=input_shape))
     # 32 convolution filters used each of size 3x3
     # again
+    #サイズ3x3のそれぞれを使用した32個の畳み込みフィルター
     model.add(Conv2D(64, (3, 3), activation='relu'))
     # 64 convolution filters used each of size 3x3
     # choose the best features via pooling
+    #サイズ3x3のそれぞれを使用した64個の畳み込みフィルター
+    #プーリングを介して最高の機能を選択します
     model.add(MaxPooling2D(pool_size=(2, 2)))
     # randomly turn neurons on and off to improve convergence
+    #収束を改善するためにニューロンをランダムにオン/オフします
     model.add(Dropout(0.25))
     # flatten since too many dimensions, we only want a classification output
+    #次元が多すぎるため平坦化するため、分類出力のみが必要です
     model.add(Flatten())
     # fully connected to get all relevant data
+    #すべての関連データを取得するために完全に接続されています
     model.add(Dense(128, activation='relu'))
     # one more dropout for convergence' sake :)
+    #収束のためにもう1つドロップアウト:)
     model.add(Dropout(0.5))
     # output a softmax to squash the matrix into output probabilities
+    #ソフトマックスを出力して、行列を出力確率に押しつぶします
     model.add(Dense(num_classes, activation='softmax'))
     # categorical ce since we have multiple classes (10)
+    #複数のクラスがあるため、カテゴリカルce（10）
     model.compile(loss=keras.losses.categorical_crossentropy,
                 optimizer=keras.optimizers.Adam(lr=learning_rate),
                 metrics=['accuracy'])
@@ -78,6 +92,7 @@ def train():
             verbose=2,
             validation_data=(x_test, y_test))
     # Evaluation
+    #評価
     score = model.evaluate(x_test, y_test, verbose=1)
 
     print('Test loss:', score[0])
@@ -85,6 +100,7 @@ def train():
     model.save(model_name)
 
     # plotting the metrics
+    #メトリックのプロット
     fig = plt.figure()
     plt.subplot(2,1,1)
     plt.plot(hist.history['acc'])
