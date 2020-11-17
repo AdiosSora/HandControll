@@ -30,14 +30,16 @@ def drawInferences(values, names=['', '', '', '', '']):
             if(values[3]>0.7):#パーの精度が7割以上で１カウント。→５０回でclick動作等のカウントを０clear
                 global clearCount
                 clearCount+=1
+                print("パー::")
                 print(clearCount)
                 if(clearCount>=40):
                     clearCount=0
                     clickCount=0
 
 
-            if(values[4] > 0.7):#パーの制度が7割以上識別で１カウントする。→50カウントで右クリックイベントが発火
+            if(values[4] > 0.7):#グーの制度が7割以上識別で１カウントする。→50カウントで右クリックイベントが発火
                 clickCount+=1
+                print("グー::")
                 print(clickCount)
                 if(clickCount>=40):
                     autopy.mouse.click(autopy.mouse.Button.RIGHT)
