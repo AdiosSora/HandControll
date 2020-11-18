@@ -14,6 +14,8 @@ import keras
 import gui
 import autopy
 import time
+p3 = 0
+p4 = 0
 
 frame_processed = 0
 score_thresh = 0.18
@@ -37,8 +39,10 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
 
     p1 = 0
     p2 = 0
-    p3 = 0
-    p4 = 0
+    global p3
+    global p4
+
+
 
     while True:
         #print("> ===== in worker loop, frame ", frame_processed)
@@ -78,45 +82,27 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 p1 = ((int(left)+((int(right)-int(left))//2))*wx)-(int(left)+((int(right)-int(left))//2))
                 p2 = ((int(top)+((int(bottom)-int(top))//2))*hx)-(int(top)+((int(bottom)-int(top))//2))
 
+
                 #判定した手の範囲を表示
                 fp = (int(left),int(top))
                 ep = (int(right),int(bottom))
                 cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
+                #前回のマウス座標と今回のマウス座標の差を抽出
+                p5 = p1-p3
+                p6 = p2-p4
                 #マウス操作
                 try:
-                    p5 = 0
-                    p6 = 0
-                    p7 = p1
-                    p8 = p2
-                    for i in range(3):
-                        if p3 != 0 and p4 != 0:
-                            if p3 > p1:
-                                p5 = (p3-p1)/2+p1
-                                if p4 > p2:
-                                    p6 = (p4-p2)/2+p2
-                                elif p4 < p2:
-                                    p6 = (p2-p4)/2+p4
-                                else:
-                                    p6 = p2
-                            elif p3 < p1:
-                                p5 = (p1-p3)/2+p3
-                                if p4 > p2:
-                                    p6 = (p4-p2)/2+p2
-                                elif p4 < p2:
-                                    p6 = (p2-p4)/2+p4
-                                else:
-                                    p6 = p2
-                            else: p5 = p1
-                            p1 = p5
-                            p2 = p6
-                        autopy.mouse.move(p5,p6)
-                    autopy.mouse.move(p7,p8)
-                    p3 = p1
-                    p4 = p2
+                    #差の絶対値が１２以上なら移動させる
+                     if(abs(p5)>12 or abs(p6)>12):
+                    #     print(p5,p6)
+                        autopy.mouse.move(p1,p2)
+                        p3 = p1
+                        p4 = p2
+
+
                 except ValueError:
-                    print('Out of bounds')
-                p3 = p1
-                p4 = p2
+                        print('Out of bounds')
+
 
             # classify hand pose
             #手のポーズを分類する
