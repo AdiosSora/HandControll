@@ -98,3 +98,6 @@ images/train/
 samples/
 .vscode/launch.json
 Dataset/
+
+#
+cnn/hand_poses_wGarbage_10.h5
