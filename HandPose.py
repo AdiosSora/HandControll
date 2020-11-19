@@ -299,26 +299,26 @@ if __name__ == '__main__':
 
         #認識した手を切り取り別ウィンドウで表示
 
-        #if (cropped_output is not None):
-            # cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
-             #if (args.display > 0):
-                #cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
-                #cv2.resizeWindow('Cropped', 450, 300)
-                #cv2.imshow('Cropped', cropped_output)
+        if (cropped_output is not None):
+             cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
+             if (args.display > 0):
+                cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
+                cv2.resizeWindow('Cropped', 450, 300)
+                cv2.imshow('Cropped', cropped_output)
 
-                #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
-                #if cv2.waitKey(1) & 0xFF == ord('q'):
-                    # break
-             #else:
-                # if (num_frames == 400):
-                    # num_frames = 0
-                    # start_time = datetime.datetime.now()
-                 #else:
-                    # print("frames processed: ", index, "elapsed time: ",
-                         #  elapsed_time, "fps: ", str(int(fps)))
+                cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                     break
+             else:
+                 if (num_frames == 400):
+                     num_frames = 0
+                     start_time = datetime.datetime.now()
+                 else:
+                     print("frames processed: ", index, "elapsed time: ",
+                           elapsed_time, "fps: ", str(int(fps)))
 
 
-        #print("frame ",  index, num_frames, elapsed_time, fps)
+        print("frame ",  index, num_frames, elapsed_time, fps)
 
         #FPSをwindowに表示する
         if (output_frame is not None):
