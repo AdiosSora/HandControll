@@ -100,4 +100,4 @@ samples/
 Dataset/
 
 #
-cnn/models/hand_poses_wGarbage_10.h5
+cnn/hand_poses_wGarbage_10.h5
