@@ -2,9 +2,19 @@ import cv2
 import numpy as np
 from random import randint
 import autopy
+
+x1=0
+x2=0
+x3=0
+x4=0
+x5=0
+x6=0
+
 clickCount=0
 clearCount=0
-def drawInferences(values, names=['', '', '', '', '']):
+
+
+def drawInferences(values, p1, p2, p3, p4, p5, p6, names=['', '', '', '', '']):
     global clearCount
     global clickCount
     nb_classes              = 5
@@ -28,21 +38,40 @@ def drawInferences(values, names=['', '', '', '', '']):
 
 
             if(values[3]>0.7):#パーの精度が7割以上で１カウント。→５０回でclick動作等のカウントを０clear
+                global x1
+                global x2
+                global x3
+                global x4
+                global x5
+                global x6
                 global clearCount
                 clearCount+=1
+                x1,x2,x3,x4,x5,x6 = p1,p2,p3,p4,p5,p6
                 print("パー::")
                 print(clearCount)
                 if(clearCount>=40):
                     clearCount=0
                     clickCount=0
 
+                #マウス操作
+                try:
+                    print(x1)
+                    #差の絶対値が１２以上なら移動させる
+                    if(abs(x5)>12 or abs(x6)>12):
+                        #     print(p5,p6)
+                        autopy.mouse.move(x1,x2)
+                        x3 = x1
+                        x4 = x2
+
+                except ValueError:
+                        print('Out of bounds')
 
             if(values[4] > 0.7):#グーの制度が7割以上識別で１カウントする。→50カウントで右クリックイベントが発火
                 clickCount+=1
                 print("グー::")
                 print(clickCount)
                 if(clickCount>=40):
-                    autopy.mouse.click(autopy.mouse.Button.RIGHT)
+                    #autopy.mouse.click(autopy.mouse.Button.RIGHT)
                     clickCount=0
 
 

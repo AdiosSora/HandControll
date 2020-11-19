@@ -14,8 +14,12 @@ import keras
 import gui
 import autopy
 import time
+p1 = 0
+p2 = 0
 p3 = 0
 p4 = 0
+p5 = 0
+p6 = 0
 
 frame_processed = 0
 score_thresh = 0.18
@@ -25,8 +29,14 @@ score_thresh = 0.18
 #グラフをロードするワーカースレッドを作成し、
 #入力キュー内の画像を検出し、出力キューに配置します
 
-
 def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed):
+    global p1
+    global p2
+    global p3
+    global p4
+    global p5
+    global p6
+
     print(">> loading frozen model for worker")
     detection_graph, sess = detector_utils.load_inference_graph()
     sess = tf.Session(graph=detection_graph)
@@ -37,14 +47,8 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
     except Exception as e:
         print(e)
 
-    p1 = 0
-    p2 = 0
-    global p3
-    global p4
-
-
-
     while True:
+
         #print("> ===== in worker loop, frame ", frame_processed)
         frame = input_q.get()
         if (frame is not None):
@@ -90,18 +94,19 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 #前回のマウス座標と今回のマウス座標の差を抽出
                 p5 = p1-p3
                 p6 = p2-p4
+
                 #マウス操作
-                try:
+                #try:
                     #差の絶対値が１２以上なら移動させる
-                     if(abs(p5)>12 or abs(p6)>12):
-                    #     print(p5,p6)
-                        autopy.mouse.move(p1,p2)
-                        p3 = p1
-                        p4 = p2
+                #    if(abs(p5)>12 or abs(p6)>12):
+                #        print(p1,p2,p3,p4,p5,p6)
+                #        autopy.mouse.move(p1,p2)
+                #        p3 = p1
+                #        p4 = p2
 
 
-                except ValueError:
-                        print('Out of bounds')
+                #except ValueError:
+                #        print('Out of bounds')
 
 
             # classify hand pose
@@ -121,6 +126,7 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
 
 
 if __name__ == '__main__':
+
     #パーサを作る
     parser = argparse.ArgumentParser()
 
@@ -243,7 +249,7 @@ if __name__ == '__main__':
 
     #Pool関数でワーカーを並列実行し、引数を渡す。
     pool = Pool(args.num_workers, worker,
-                (input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed))
+               (input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed))
 
     #現在時刻を取得
     start_time = datetime.datetime.now()
@@ -295,30 +301,31 @@ if __name__ == '__main__':
         #推論を表示する
         #手のポーズとその予想を表示
         if(inferences is not None):
-            gui.drawInferences(inferences, poses)
+            print(p1)
+            gui.drawInferences(inferences, p1, p2, p3, p4, p5, p6, poses)
 
         #認識した手を切り取り別ウィンドウで表示
 
-        if (cropped_output is not None):
-             cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
-             if (args.display > 0):
-                cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
-                cv2.resizeWindow('Cropped', 450, 300)
-                cv2.imshow('Cropped', cropped_output)
+        #if (cropped_output is not None):
+            # cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
+             #if (args.display > 0):
+                #cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
+                #cv2.resizeWindow('Cropped', 450, 300)
+                #cv2.imshow('Cropped', cropped_output)
 
-                cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                     break
-             else:
-                 if (num_frames == 400):
-                     num_frames = 0
-                     start_time = datetime.datetime.now()
-                 else:
-                     print("frames processed: ", index, "elapsed time: ",
-                           elapsed_time, "fps: ", str(int(fps)))
+                #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
+                #if cv2.waitKey(1) & 0xFF == ord('q'):
+                    # break
+             #else:
+                # if (num_frames == 400):
+                    # num_frames = 0
+                    # start_time = datetime.datetime.now()
+                 #else:
+                    # print("frames processed: ", index, "elapsed time: ",
+                         #  elapsed_time, "fps: ", str(int(fps)))
 
 
-        print("frame ",  index, num_frames, elapsed_time, fps)
+        #print("frame ",  index, num_frames, elapsed_time, fps)
 
         #FPSをwindowに表示する
         if (output_frame is not None):
