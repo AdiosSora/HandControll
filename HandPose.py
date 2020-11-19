@@ -307,7 +307,7 @@ if __name__ == '__main__':
                 cv2.imshow('Cropped', cropped_output)
 
                 cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
-                 if cv2.waitKey(1) & 0xFF == ord('q'):
+                if cv2.waitKey(1) & 0xFF == ord('q'):
                      break
              else:
                  if (num_frames == 400):
