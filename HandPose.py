@@ -66,11 +66,11 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
 
                 #画面比率変数設定
                 wx = (width + ((int(right)-int(left)))*(width / cap_params['im_width'])) / cap_params['im_width']
-                hx = (height + ((int(bottom)-int(top)))*(height / cap_params['im_height'])) / cap_params['im_height']
+                # hx = (height + ((int(bottom)-int(top)))*(height / (cap_params['im_height']))) / cap_params['im_height']
+                hx = height/(cap_params['im_height']-int(bottom))
 
-                #手の判定サイズの中点を変数へ設定
-                p1 = ((int(left)+((int(right)-int(left))//2))*wx)-(int(left)+((int(right)-int(left))//2))
-                p2 = ((int(top)+((int(bottom)-int(top))//2))*hx)-(int(top)+((int(bottom)-int(top))//2))
+                p1 = int(left)*wx
+                p2 = (int(bottom)+int(top))*hx
 
                 #判定した手の範囲を表示
                 fp = (int(left),int(top))
