@@ -16,6 +16,7 @@ import autopy
 import time
 p3 = 0
 p4 = 0
+a =0
 
 frame_processed = 0
 score_thresh = 0.18
@@ -90,10 +91,14 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 #前回のマウス座標と今回のマウス座標の差を抽出
                 p5 = p1-p3
                 p6 = p2-p4
+                global a
+                a = a + 1
+
                 #マウス操作
                 try:
+                    if(a % 2 ==0):
                     #差の絶対値が１２以上なら移動させる
-                     if(abs(p5)>12 or abs(p6)>12):
+                     if(abs(p5)>15 or abs(p6)>15):
                     #     print(p5,p6)
                         autopy.mouse.move(p1,p2)
                         p3 = p1

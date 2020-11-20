@@ -42,7 +42,7 @@ def drawInferences(values, names=['', '', '', '', '']):
                 print("グー::")
                 print(clickCount)
                 if(clickCount>=40):
-                    autopy.mouse.click(autopy.mouse.Button.RIGHT)
+                    autopy.mouse.click(autopy.mouse.Button.LEFT)
                     clickCount=0
 
 
