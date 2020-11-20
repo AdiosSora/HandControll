@@ -16,6 +16,7 @@ import autopy
 import time
 p3 = 0
 p4 = 0
+a =0
 
 frame_processed = 0
 score_thresh = 0.18
@@ -37,13 +38,6 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
     except Exception as e:
         print(e)
 
-    p1 = 0
-    p2 = 0
-    global p3
-    global p4
-
-
-
     while True:
         #print("> ===== in worker loop, frame ", frame_processed)
         frame = input_q.get()
@@ -57,7 +51,6 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
             boxes, scores = detector_utils.detect_objects(
                 frame, detection_graph, sess)
 
-            #判定領域のイメージ
             cv2.rectangle(frame, (int(cap_params['im_width'])//20,int(cap_params['im_height'])//20),
                         (int(cap_params['im_width'])-(int(cap_params['im_width'])//20),int(cap_params['im_height'])-(int(cap_params['im_height'])//20)),
                         (255, 9, 1), 1, 1)
@@ -82,7 +75,6 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 p1 = ((int(left)+((int(right)-int(left))//2))*wx)-(int(left)+((int(right)-int(left))//2))
                 p2 = ((int(top)+((int(bottom)-int(top))//2))*hx)-(int(top)+((int(bottom)-int(top))//2))
 
-
                 #判定した手の範囲を表示
                 fp = (int(left),int(top))
                 ep = (int(right),int(bottom))
@@ -90,10 +82,14 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 #前回のマウス座標と今回のマウス座標の差を抽出
                 p5 = p1-p3
                 p6 = p2-p4
+                global a
+                a = a + 1
+
                 #マウス操作
                 try:
+                    if(a % 2 ==0):
                     #差の絶対値が１２以上なら移動させる
-                     if(abs(p5)>12 or abs(p6)>12):
+                     if(abs(p5)>15 or abs(p6)>15):
                     #     print(p5,p6)
                         autopy.mouse.move(p1,p2)
                         p3 = p1
@@ -101,8 +97,7 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
 
 
                 except ValueError:
-                        print('Out of bounds')
-
+                    print('Out of bounds')
 
             # classify hand pose
             #手のポーズを分類する
@@ -187,7 +182,7 @@ if __name__ == '__main__':
         default=4,
         help='Number of workers.')
 
-    #FIFO Queueの最大サイズ
+    #???
     parser.add_argument(
         '-q-size',
         '--queue-size',
@@ -211,29 +206,21 @@ if __name__ == '__main__':
 
     cap_params = {}
     frame_processed = 0
-
-    #キャプチャーしたビデオの縦幅、横幅をcap_params配列に代入
     cap_params['im_width'], cap_params['im_height'] = video_capture.size()
     print(cap_params['im_width'], cap_params['im_height'])
-
-    #手の信頼地をcap_params配列に代入
     cap_params['score_thresh'] = score_thresh
 
+    # max number of hands we want to detect/track
     #検出/追跡する手の最大数
     cap_params['num_hands_detect'] = args.num_hands
 
     print(cap_params, args)
 
-    #ポーズサンプル配列を定義
+    # Count number of files to increment new example directory
+    #新しいサンプルディレクトリをインクリメントするファイルの数を数える
     poses = []
-
-    #テキストファイルを開く
     _file = open("poses.txt", "r")
-
-    #テキストファイルを行ごとに分けて代入する。
     lines = _file.readlines()
-
-    #テキストファイルの行分ループし、poses配列にポーズ名を追加
     for line in lines:
         line = line.strip()
         if(line != ""):
@@ -241,59 +228,41 @@ if __name__ == '__main__':
             poses.append(line)
 
 
-    #Pool関数でワーカーを並列実行し、引数を渡す。
+    # spin up workers to paralleize detection.
+    #ワーカーをスピンアップして検出を並列化します。
     pool = Pool(args.num_workers, worker,
                 (input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed))
 
-    #現在時刻を取得
     start_time = datetime.datetime.now()
-    #フレーム数初期化
     num_frames = 0
-    #FPS値初期化
     fps = 0
     index = 0
 
-    #ウィンドウを作成(ユーザーがウィンドウサイズ指定可能)
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
 
-    #終了ボタンが押されるまでループ
     while True:
-        #読み込んだ一番最新のフレームをframe関数に代入
         frame = video_capture.read()
-        #フレームを左右反転
         frame = cv2.flip(frame, 1)
-        #index変数をインクリメントする
         index += 1
-        #BGRからRGBへframeの画像を変換し、input_qへ追加
+
         input_q.put(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
-        #Worker関数から出力された output_qからoputput_frameに代入
         output_frame = output_q.get()
-
-        #Worker関数から出力された cropped_output_qからcropped_outputに代入
         cropped_output = cropped_output_q.get()
 
-        #inferences変数初期化
         inferences      = None
 
-
         try:
-            #キューの内容を変数に代入しキューから要素を削除
             inferences = inferences_q.get_nowait()
-            # print(inferences)
-            #例外を無視
         except Exception as e:
             pass
 
-        #フレームレート計算
         elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
         num_frames += 1
         fps = num_frames / elapsed_time
 
-
         # Display inferences
         #推論を表示する
-        #手のポーズとその予想を表示
         if(inferences is not None):
             gui.drawInferences(inferences, poses)
 
@@ -322,20 +291,14 @@ if __name__ == '__main__':
 
         #FPSをwindowに表示する
         if (output_frame is not None):
-            #print(output_frame)
             output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
             if (args.display > 0):
                 if (args.fps > 0):
                     detector_utils.draw_fps_on_image("FPS : " + str(int(fps)),
                                                      output_frame)
-
-                #画像ファイルを読み込む　imshow(読み込む画像、画像の読み込み方法指定)
                 cv2.imshow('Handpose', output_frame)
-
-                #qキーが入力されたとき終了させる
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
-
             else:
                 if (num_frames == 400):
                     num_frames = 0
@@ -346,12 +309,9 @@ if __name__ == '__main__':
         else:
             print("video end")
             break
-    #fps値を計算し出力
     elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
     fps = num_frames / elapsed_time
     print("fps", fps)
-    #実行中の処理を完了させずにワーカープロセスをすぐに停止
     pool.terminate()
-    #終了処理
     video_capture.stop()
     cv2.destroyAllWindows()
