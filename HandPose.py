@@ -318,7 +318,7 @@ if __name__ == '__main__':
         #                    elapsed_time, "fps: ", str(int(fps)))
 
 
-        print("frame ",  index, num_frames, elapsed_time, fps)
+        # print("frame ",  index, num_frames, elapsed_time, fps)
 
         #FPSをwindowに表示する
         if (output_frame is not None):
