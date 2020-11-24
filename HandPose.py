@@ -34,7 +34,12 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
         model, classification_graph, session = classifier.load_KerasGraph("cnn/models/hand_poses_wGarbage_10.h5")
     except Exception as e:
         print(e)
-
+    p1 = 0
+    p2 = 0
+    p1_pre = 0
+    p2_pre = 0
+    p1_att = 0
+    p2_att = 0
     while True:
         #print("> ===== in worker loop, frame ", frame_processed)
         frame = input_q.get()
@@ -66,11 +71,10 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
 
                 #画面比率変数設定
                 wx = (width + ((int(right)-int(left)))*(width / cap_params['im_width'])) / cap_params['im_width']
-                hx = (height + ((int(bottom)-int(top)))*(height / cap_params['im_height'])) / cap_params['im_height']
+                hx = (height + ((int(bottom)-int(top)))*(height / (cap_params['im_height']))) / cap_params['im_height']
 
-                #手の判定サイズの中点を変数へ設定
-                p1 = ((int(left)+((int(right)-int(left))//2))*wx)-(int(left)+((int(right)-int(left))//2))
-                p2 = ((int(top)+((int(bottom)-int(top))//2))*hx)-(int(top)+((int(bottom)-int(top))//2))
+                p1 = int(left)*wx
+                p2 = int(top)*hx
 
                 #判定した手の範囲を表示
                 fp = (int(left),int(top))
@@ -78,7 +82,26 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
                 #マウス操作
                 try:
+                    #座標間移動を何回行うか設定
+                    i = 9
+                    if(p1 > p1_pre):
+                        p1_att = (p1-p1_pre) / i
+                    else:
+                        p1_att = (p1_pre-p1) / i
+
+                    if(p2 > p2_pre):
+                        p2_att = (p2-p2_pre) / i
+                    else:
+                        p2_att = (p2_pre-p2) / i
+
+                    #座標間移動実行
+                    for j in range(i):
+                        autopy.mouse.move(p1_pre+p1_att*j,p2_pre+p2_att*j)
+
+                    #座標移動実行
                     autopy.mouse.move(p1,p2)
+
+                #座標がモニターの範囲外の場合のエラーキャッチ
                 except ValueError:
                     print('Out of bounds')
 
