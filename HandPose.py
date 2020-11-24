@@ -245,7 +245,7 @@ if __name__ == '__main__':
     index = 0
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
-
+    poseCount = [0,0,0,0]
     while True:
         frame = video_capture.read()
         frame = cv2.flip(frame, 1)
@@ -270,7 +270,7 @@ if __name__ == '__main__':
         # Display inferences
         #推論を表示する
         if(inferences is not None):
-            gui.drawInferences(inferences, poses)
+            gui.drawInferences(inferences,poseCount, poses)
 
         if (cropped_output is not None):
             cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
