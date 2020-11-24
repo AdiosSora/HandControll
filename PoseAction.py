@@ -5,7 +5,6 @@ def checkPose(Namelist,poseName,poseCount):#識別が7割超えたポーズが�
     # if not poseCount:
     #     for tmp in Namelist:
     #         poseCount.append(0)
-    action=["","","",""]
     i=0
     for tmp in Namelist:
         if(str(Namelist[i])==str(poseName)and poseName!="Garbage"):
@@ -37,10 +36,11 @@ def checkPose(Namelist,poseName,poseCount):#識別が7割超えたポーズが�
 
 def pose_Click_left():#OKの時発火
     print("Click_left!!!!")
+    #autopy.mouse.click(autopy.mouse.Button.LEFT)
 
 def pose_Click_Right():#グーの時発火
     print("Click_Right!!!!")
-    autopy.mouse.click(autopy.mouse.Button.RIGHT)
+    #autopy.mouse.click(autopy.mouse.Button.RIGHT)
 
 def pose_Drug_Drop():#空白の処理
     print("Drug_Drop!!!!")
