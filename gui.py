@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 from random import randint
 import autopy
-
-def drawInferences(values, names=['', '', '', '']):
+import PoseAction
+def drawInferences(values, poseCount, names=['', '', '', '']):
     nb_classes              = 4
     left_margin             = 150
     margin                  = 50
@@ -15,14 +15,15 @@ def drawInferences(values, names=['', '', '', '']):
     lineType                = 2
 
     blank = np.zeros((450,600,3), np.uint8)
-
     #いずれかのハンドポーズが70%以上で識別識別した場合　”黄緑色に”　色を変える
     #nb_classesの要素数ループを繰り返す
     for i in range(nb_classes):
         if(values[i] > 0.7):
             cv2.rectangle(blank, (left_margin, margin + int(margin*i)), (left_margin + int(values[i]*200), margin + thickness + int(margin*i)), (0,255,0), -1)
-            #if(values[1] > 0.7):
-                #autopy.mouse.click(autopy.mouse.Button.RIGHT)
+
+            poseCount = PoseAction.checkPose(names,names[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
+
+
         else:
             cv2.rectangle(blank, (left_margin, margin + int(margin*i)), (left_margin + int(values[i]*200), margin + thickness + int(margin*i)), (255,255,255), -1)
         cv2.putText(blank, names[i], (0, margin + int(margin*i) + int(thickness/2)), font, fontScale, fontColor, lineType)
