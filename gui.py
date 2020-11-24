@@ -21,7 +21,7 @@ def drawInferences(values, poseCount, names=['', '', '', '']):
         if(values[i] > 0.7):
             cv2.rectangle(blank, (left_margin, margin + int(margin*i)), (left_margin + int(values[i]*200), margin + thickness + int(margin*i)), (0,255,0), -1)
 
-            #poseCount = PoseAction.checkPose(names,names[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
+            poseCount = PoseAction.checkPose(names,names[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
 
 
         else:

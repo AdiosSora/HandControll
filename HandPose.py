@@ -64,7 +64,6 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 width,height = autopy.screen.size()
 
                 #画面比率変数設定
-                #モニター横幅+識別手の横幅のサイズから比率を割り出すことで画面端まで移動できるように設定。(縦も同様)
                 wx = (width + ((int(right)-int(left)))*(width / cap_params['im_width'])) / cap_params['im_width']
                 hx = (height + ((int(bottom)-int(top)))*(height / (cap_params['im_height']))) / cap_params['im_height']
 
@@ -223,7 +222,7 @@ if __name__ == '__main__':
     index = 0
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
-
+    poseCount = [0,0,0,0]
     while True:
         frame = video_capture.read()
         frame = cv2.flip(frame, 1)
@@ -248,7 +247,7 @@ if __name__ == '__main__':
         # Display inferences
         #推論を表示する
         if(inferences is not None):
-            gui.drawInferences(inferences, poses)
+            gui.drawInferences(inferences,poseCount, poses)
 
         if (cropped_output is not None):
             cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
