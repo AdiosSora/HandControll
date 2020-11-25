@@ -151,7 +151,7 @@ if __name__ == '__main__':
         default=1,
         help='Display the detected images using OpenCV. This reduces FPS')
 
-    #???
+    #ワーカーが同時に動く数を設定。
     parser.add_argument(
         '-num-w',
         '--num-workers',
@@ -160,7 +160,7 @@ if __name__ == '__main__':
         default=4,
         help='Number of workers.')
 
-    #???
+    #FIFO Queueの最大サイズを設定。
     parser.add_argument(
         '-q-size',
         '--queue-size',
@@ -240,14 +240,16 @@ if __name__ == '__main__':
         fps = num_frames / elapsed_time
 
         # Display inferences
-        #推論を表示する
+        #ポーズの手の形の推測グラフを表示する
         if(inferences is not None):
             gui.drawInferences(inferences,poseCount, poses)
+            #ポーズの形の信頼地が0.7を超えたらアクションを実行する
             for i in range(3):
                 if(inferences[i] > 0.7):
                     poseCount = PoseAction.checkPose(poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
 
         if (cropped_output is not None):
+            #切り取った画像をBGR形式からRGB形式へ変更する。
             cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
             if (args.display > 0):
                 cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
