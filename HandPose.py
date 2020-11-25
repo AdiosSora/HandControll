@@ -14,6 +14,7 @@ import keras
 import gui
 import autopy
 import time
+import PoseAction
 
 frame_processed = 0
 score_thresh = 0.18
@@ -66,23 +67,15 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
                 #画面比率変数設定
                 wx = (width + (int(right)-int(left))*(width / cap_params['im_width'])) / cap_params['im_width']
 
-                hx = (height - (int(bottom)-int(top))*(height / cap_params['im_height'])) / cap_params['im_height']
+                hx = (height + (int(bottom)-int(top))*(height / cap_params['im_height'])) / cap_params['im_height']
 
                 p1 = int(left)*wx
-                p2 = height-(height-int(bottom)*hx)
+                p2 = int(bottom)*hx-(int(bottom)*hx-int(top)*hx)
 
                 #判定した手の範囲を表示
                 fp = (int(left),int(top))
                 ep = (int(right),int(bottom))
                 cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
-
-
-                #マウス操作
-                #try:
-                    #座標移動実行
-                    #autopy.mouse.move(p1,p2)
-                #except ValueError:
-                    #print('Out of bounds')
 
                 #取得した座標(p1,p2)を挿入
                 pointX_q.put(p1)
@@ -255,10 +248,13 @@ if __name__ == '__main__':
         # Display inferences
         #推論を表示する
         if(inferences is not None):
-            #worker関数内のp1,p2の値を代入
-            x = pointX_q.get_nowait()
-            y = pointY_q.get_nowait()
-            gui.drawInferences(x, y, inferences, poseCount, poses)
+            gui.drawInferences(inferences,poseCount, poses)
+            for i in range(3):
+                if(inferences[i] > 0.7):
+                    #worker関数内のp1,p2の値を代入
+                    x = pointX_q.get_nowait()
+                    y = pointY_q.get_nowait()
+                    poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
 
         if (cropped_output is not None):
             cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
