@@ -248,12 +248,12 @@ if __name__ == '__main__':
         # Display inferences
         #推論を表示する
         if(inferences is not None):
+            #worker関数内のp1,p2の値を代入
+            x = pointX_q.get_nowait()
+            y = pointY_q.get_nowait()
             gui.drawInferences(inferences,poseCount, poses)
             for i in range(3):
                 if(inferences[i] > 0.7):
-                    #worker関数内のp1,p2の値を代入
-                    x = pointX_q.get_nowait()
-                    y = pointY_q.get_nowait()
                     poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
 
         if (cropped_output is not None):
