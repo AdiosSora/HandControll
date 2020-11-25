@@ -24,7 +24,7 @@ score_thresh = 0.18
 #入力キュー内の画像を検出し、出力キューに配置します
 
 
-def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed):
+def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed):
     print(">> loading frozen model for worker")
     detection_graph, sess = detector_utils.load_inference_graph()
     sess = tf.Session(graph=detection_graph)
@@ -75,14 +75,18 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
                 fp = (int(left),int(top))
                 ep = (int(right),int(bottom))
                 cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
+
+
                 #マウス操作
-                try:
+                #try:
                     #座標移動実行
-                    autopy.mouse.move(p1,p2)
+                    #autopy.mouse.move(p1,p2)
+                #except ValueError:
+                    #print('Out of bounds')
 
-                except ValueError:
-                    print('Out of bounds')
-
+                #取得した座標(p1,p2)を挿入
+                pointX_q.put(p1)
+                pointY_q.put(p2)
             # classify hand pose
             #手のポーズを分類する
             if res is not None:
@@ -184,6 +188,9 @@ if __name__ == '__main__':
     cropped_output_q    = Queue(maxsize=args.queue_size)
     inferences_q        = Queue(maxsize=args.queue_size)
 
+    pointX_q = Queue(maxsize=args.queue_size)#worker内のp1用
+    pointY_q = Queue(maxsize=args.queue_size)#worker内のp2用
+
     #初期設定したargsパーサーからWebカメラの指定及びサイズを取得
     video_capture = WebcamVideoStream(
         src=args.video_source, width=args.width, height=args.height).start()
@@ -215,7 +222,7 @@ if __name__ == '__main__':
     # spin up workers to paralleize detection.
     #ワーカーをスピンアップして検出を並列化します。
     pool = Pool(args.num_workers, worker,
-                (input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed))
+                (input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed))
 
     start_time = datetime.datetime.now()
     num_frames = 0
@@ -248,7 +255,10 @@ if __name__ == '__main__':
         # Display inferences
         #推論を表示する
         if(inferences is not None):
-            gui.drawInferences(inferences,poseCount, poses)
+            #worker関数内のp1,p2の値を代入
+            x = pointX_q.get_nowait()
+            y = pointY_q.get_nowait()
+            gui.drawInferences(x, y, inferences, poseCount, poses)
 
         if (cropped_output is not None):
             cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
