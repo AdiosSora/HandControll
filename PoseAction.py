@@ -6,6 +6,7 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
     #     for tmp in Namelist:
     #         poseCount.append(0)
     i=0
+    dropswitch=0
     if poseName=="Palm":
         pointerMove(x,y)
     for tmp in Namelist:
@@ -15,11 +16,18 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
 
             #識別が50を超えたか識別。
             for l in poseCount:
-                if(l>=50):
-                    print("50over!!")
-                    print(poseName)
+                if(l<=50 and poseName=="Dang"):
+                    dropswitch==1
+                    pose_Drag()
+
+                elif(l<=10 and poseName=="Dang"):
+                    pose_Click_left()
+
+                elif(dropswitch==1 and l<=10 and poseName=="Palm"):
+                    pose_Drop()
+
                     #識別が50を超えたポーズで指定の動作
-                    #if poseName=="Palm":
+
                         #pointerMove()
                         #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
                     if str(poseName)=="Dang":
@@ -39,15 +47,20 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
 
 def pose_Click_left():#OKの時発火
     print("Click_left!!!!")
-    #autopy.mouse.click(autopy.mouse.Button.LEFT)
+    autopy.mouse.click(autopy.mouse.Button.LEFT)
 
-def pose_Click_Right():#グーの時発火
-    print("Click_Right!!!!")
+def pose_doubleClick_left():#OKの時発火
+    print("Click_left!!!!")
+    autopy.mouse.click(autopy.mouse.Button.LEFT)
+    autopy.mouse.click(autopy.mouse.Button.LEFT)
+
+def pose_Drag():#グーの時発火
+    print("Drag!!!!")
     autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
-    #autopy.mouse.click(autopy.mouse.Button.RIGHT)
 
-def pose_Drug_Drop():#空白の処理
-    print("Drug_Drop!!!!")
+def pose_Drop():#空白の処理
+    print("Drop!!!!")
+    autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
 
 def pointerMove(x,y):#パーの時発火
     print("pointerMove!!!!")
