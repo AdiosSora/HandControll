@@ -51,5 +51,8 @@ def pose_Drug_Drop():#空白の処理
 
 def pointerMove(x,y):#パーの時発火
     print("pointerMove!!!!")
-    autopy.mouse.move(x,y)
-    autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+    try:
+        autopy.mouse.move(x,y)
+        autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+    except:
+        print("outof")
