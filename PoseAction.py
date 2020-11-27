@@ -7,7 +7,9 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
     #         poseCount.append(0)
     i=0
     if poseName=="Palm":
-        pointerMove(x,y)
+            pointerMove(x,y)
+            print("out ob bound　ポインター")
+        return poseCount
     for tmp in Namelist:
         if(str(Namelist[i])==str(poseName)and poseName!="Garbage"):
             poseCount[i]+=1
@@ -50,6 +52,6 @@ def pose_Drug_Drop():#空白の処理
     print("Drug_Drop!!!!")
 
 def pointerMove(x,y):#パーの時発火
-    print("pointerMove!!!!")
-    autopy.mouse.move(x,y)
-    autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+        print("pointerMove!!!!")
+        autopy.mouse.move(x,y)
+        autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
