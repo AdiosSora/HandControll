@@ -137,6 +137,7 @@ def main():
     print('>> model loaded!')
 
     _iter = 1
+
     # Read until video is completed
     #ビデオが完成するまで読む
     while(vid.isOpened()):
@@ -162,7 +163,16 @@ def main():
             # Save cropped image
             #トリミングした画像を保存する
             if(res is not None):
-                cv2.imwrite(currentPath + currentExample + str(_iter) + '.png', cv2.cvtColor(res, cv2.COLOR_RGB2BGR))
+
+                hsv = cv2.cvtColor(res, cv2.COLOR_RGB2HSV_FULL)
+                # Threshold the HSV image to get only blue colors
+                lower_blue = np.array([0, 30, 60])
+                upper_blue = np.array([30, 200, 255])
+                mask = cv2.inRange(hsv, lower_blue, upper_blue)
+                # Bitwise-AND mask and original image
+                frame_masked = cv2.bitwise_and(hsv,hsv, mask=mask)
+
+                cv2.imwrite(currentPath + currentExample + str(_iter) + '.png', cv2.cvtColor(frame_masked, cv2.COLOR_HSV2BGR))
 
             _iter += 1
         # Break the loop

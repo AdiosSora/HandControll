@@ -17,19 +17,36 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
 
             #識別が50を超えたか識別。
             for l in poseCount:
-                if(l>=50):
-                    print("50over!!")
-                    print(poseName)
+                if(l<=50 and poseName=="Dang"):
+                    #if(poseCount[3]==0)
+                        #poseCount[3]+=1
+                    if(poseCount[3]==1):
+                        pointerMove(x,y)
+
+                    poseCount[3]=1
+                    pose_Drag(l)
+
+                #elif(l<=10 and poseName=="Dang"):
+                    #and poseCount[3]==0
+                    #pose_Click_left(l)
+
+                elif(poseName=="Palm" and poseCount[3]==1):
+                    pose_Drop(l)
+                    poseCount[3]=0
+                    #if str(poseName)=="Dang":
+                        #print("Click_Right!!!!")
+                        #autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
+                        #pose_Click_Right()
                     #識別が50を超えたポーズで指定の動作
-                    #if poseName=="Palm":
+
                         #pointerMove()
                         #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
                     if str(poseName)=="Dang":
-                        print("Click_Right!!!!")
-                        autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
-                        #pose_Click_Right()
+                        pose_Click_Right()
 
-                    poseCount[i]=0
+                elif (poseName=="Palm"):
+                    pointerMove(x,y)
+                poseCount[i]=0
 
             # return poseCount
             #todo(switch文で)
@@ -39,19 +56,29 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
 
 
 
-def pose_Click_left():#OKの時発火
+def pose_Click_left(l):
     print("Click_left!!!!")
-    #autopy.mouse.click(autopy.mouse.Button.LEFT)
+    autopy.mouse.click(autopy.mouse.Button.LEFT)
 
-def pose_Click_Right():#グーの時発火
-    print("Click_Right!!!!")
+def pose_doubleClick_left():
+    print("Click_left!!!!")
+    autopy.mouse.click(autopy.mouse.Button.LEFT)
+    autopy.mouse.click(autopy.mouse.Button.LEFT)
+
+def pose_Drag(l):
+    print("Drag!!!!")
     autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
-    #autopy.mouse.click(autopy.mouse.Button.RIGHT)
+    l=0
 
-def pose_Drug_Drop():#空白の処理
-    print("Drug_Drop!!!!")
+def pose_Drop(l):
+    print("Drop!!!!")
+    autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+    l=0
 
-def pointerMove(x,y):#パーの時発火
-        print("pointerMove!!!!")
+def pointerMove(x,y):
+    print("pointerMove!!!!")
+    try:
         autopy.mouse.move(x,y)
         autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+    except:
+        print("outof")

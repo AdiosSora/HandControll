@@ -15,9 +15,11 @@ import gui
 import autopy
 import time
 import PoseAction
+import numpy as np
 
 frame_processed = 0
 score_thresh = 0.18
+
 
 # Create a worker thread that loads graph and
 # does detection on images in an input queue and puts it on an output queue
@@ -47,28 +49,33 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
             #ヒント：len（boxes）> 1の場合、（スコアのしきい値内で）少なくとも片方の手を見つけたと見なすことができます。
             boxes, scores = detector_utils.detect_objects(
                 frame, detection_graph, sess)
+                #p1=(int(cap_params['im_width'])//20,int(cap_params['im_height'])//20)
+                #p2=(int(cap_params['im_width'])-(int(cap_params['im_width'])//20),int(cap_params['im_height'])-(int(cap_params['im_height'])//20))
 
-            cv2.rectangle(frame, (int(cap_params['im_width'])//20,int(cap_params['im_height'])//20),
-                        (int(cap_params['im_width'])-(int(cap_params['im_width'])//20),int(cap_params['im_height'])-(int(cap_params['im_height'])//20)),
-                        (255, 9, 1), 1, 1)
             # get region of interest
             #関心領域を取得
+            # res = detector_utils.get_box_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
+            #     scores, boxes, cap_params['im_width'], cap_params['im_height'], frame)
+            #フレームの画像サイズを取得
+            cropped_height,cropped_width,a = frame.shape[:3]
             res = detector_utils.get_box_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
-                scores, boxes, cap_params['im_width'], cap_params['im_height'], frame)
+                scores, boxes, cropped_width,cropped_height, frame)
 
             #手の判定が一定値を超えたとき
             if (scores[0] > score_thresh):
-                (left, right, top, bottom) = (boxes[0][1] * cap_params['im_width'], boxes[0][3] * cap_params['im_width'],
-                                              boxes[0][0] * cap_params['im_height'], boxes[0][2] * cap_params['im_height'])
+                (left, right, top, bottom) = (boxes[0][1] * cropped_width, boxes[0][3] * cropped_width,
+                                              boxes[0][0] * cropped_height, boxes[0][2] * cropped_height)
 
                 #ウィンドウサイズを取得
                 width,height = autopy.screen.size()
 
                 #画面比率変数設定
-                wx = ((width) + (int(right)-int(left))*(width / cap_params['im_width'])) / cap_params['im_width']
+                # wx = (width + (int(right)-int(left))*(width / cap_params['im_width'])) / cap_params['im_width']
+                #
+                # hx = (height + (int(bottom)-int(top))*(height / cap_params['im_height'])) / cap_params['im_height']
+                wx = (width + (int(right)-int(left))*(width / cropped_width)) / (cropped_width-20)
 
-                hx = ((height) + (int(bottom)-int(top))*(height / cap_params['im_height'])) / cap_params['im_height']
-
+                hx = (height + (int(bottom)-int(top))*(height / cropped_height)) / (cropped_height-20)
                 p1 = int(left)*wx
                 p2 = int(bottom)*hx-(int(bottom)*hx-int(top)*hx)
 
@@ -222,14 +229,45 @@ if __name__ == '__main__':
     fps = 0
     index = 0
 
+    # 切り抜く色範囲の上限下限を設定
+    lower_blue = np.array([0, 30, 60])
+    upper_blue = np.array([30, 200, 255])
+
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
     poseCount = [0,0,0,0]
     while True:
         frame = video_capture.read()
         frame = cv2.flip(frame, 1)
+
         index += 1
 
-        input_q.put(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+
+        #画像切り取るかどうか
+        frame_cropped_flag = False
+        #画面サイズを縮小させ稼働領域の調整を行う
+        #各パラメーターに値を入力することで画像サイズを小さくできる
+        if(frame_cropped_flag == True):
+            left_params = int(cap_params['im_width'])//20
+            top_params = int(cap_params['im_height'])//20
+            right_params = int(cap_params['im_width'])-(int(cap_params['im_width'])//20)
+            bottom_params = int(cap_params['im_height'])-(int(cap_params['im_height'])//20)
+
+            #キャプチャした画像の切り取り
+            frame = frame[top_params:bottom_params,left_params:right_params].copy()
+            # frame = frame[0:50,0:50].copy()
+
+        #背景切り抜きの為画像形式をBGRからHSVへ変更
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV_FULL)
+        #設定した色範囲を塗りつぶしたマスク画像を生成
+        mask = cv2.inRange(hsv, lower_blue, upper_blue)
+        #生成したマスクで通常画像を切り抜き
+        frame_masked = cv2.bitwise_and(hsv,hsv, mask=mask)
+
+        # print(left_params,top_params,right_params,bottom_params)
+
+
+        #マスク処理済の画像をHSV形式からRGB形式へ変換
+        input_q.put(cv2.cvtColor(frame_masked, cv2.COLOR_HSV2RGB))
 
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
