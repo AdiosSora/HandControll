@@ -15,6 +15,7 @@ import gui
 import autopy
 import time
 import PoseAction
+import numpy as np
 
 frame_processed = 0
 score_thresh = 0.18
@@ -228,6 +229,10 @@ if __name__ == '__main__':
     fps = 0
     index = 0
 
+    # 切り抜く色範囲の上限下限を設定
+    lower_blue = np.array([0, 30, 60])
+    upper_blue = np.array([30, 200, 255])
+
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
     poseCount = [0,0,0,0]
     while True:
@@ -235,18 +240,35 @@ if __name__ == '__main__':
         frame = cv2.flip(frame, 1)
 
         index += 1
+
+
+        #画像切り取るかどうか
+        frame_cropped_flag = False
         #画面サイズを縮小させ稼働領域の調整を行う
         #各パラメーターに値を入力することで画像サイズを小さくできる
-        left_params = int(cap_params['im_width'])//20
-        top_params = int(cap_params['im_height'])//20
-        right_params = int(cap_params['im_width'])-(int(cap_params['im_width'])//20)
-        bottom_params = int(cap_params['im_height'])-(int(cap_params['im_height'])//20)
-        # print(left_params,top_params,right_params,bottom_params)
-        #キャプチャした画像の切り取り
-        frame = frame[top_params:bottom_params,left_params:right_params].copy()
+        if(frame_cropped_flag == True):
+            left_params = int(cap_params['im_width'])//20
+            top_params = int(cap_params['im_height'])//20
+            right_params = int(cap_params['im_width'])-(int(cap_params['im_width'])//20)
+            bottom_params = int(cap_params['im_height'])-(int(cap_params['im_height'])//20)
 
-        # frame = frame[0:50,100:250].copy()
-        input_q.put(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+            #キャプチャした画像の切り取り
+            frame = frame[top_params:bottom_params,left_params:right_params].copy()
+            # frame = frame[0:50,0:50].copy()
+
+        #背景切り抜きの為画像形式をBGRからHSVへ変更
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV_FULL)
+        #設定した色範囲を塗りつぶしたマスク画像を生成
+        mask = cv2.inRange(hsv, lower_blue, upper_blue)
+        #生成したマスクで通常画像を切り抜き
+        frame_masked = cv2.bitwise_and(hsv,hsv, mask=mask)
+
+        # print(left_params,top_params,right_params,bottom_params)
+
+
+        #マスク処理済の画像をHSV形式からRGB形式へ変換
+        input_q.put(cv2.cvtColor(frame_masked, cv2.COLOR_HSV2RGB))
+
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
 

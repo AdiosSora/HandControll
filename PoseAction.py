@@ -34,6 +34,12 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
                         #print("Click_Right!!!!")
                         #autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
                         #pose_Click_Right()
+                    #識別が50を超えたポーズで指定の動作
+
+                        #pointerMove()
+                        #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+                    if str(poseName)=="Dang":
+                        pose_Click_Right()
 
                 elif (poseName=="Palm"):
                     pointerMove(x,y)
