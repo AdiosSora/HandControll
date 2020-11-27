@@ -6,7 +6,10 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
     #     for tmp in Namelist:
     #         poseCount.append(0)
     i=0
-    #dropswitch=0
+    if poseName=="Palm":
+            pointerMove(x,y)
+            print("out ob bound　ポインター")
+        return poseCount
     for tmp in Namelist:
         if(str(Namelist[i])==str(poseName)and poseName!="Garbage"):
             poseCount[i]+=1
