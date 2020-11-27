@@ -23,9 +23,7 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
                         #pointerMove()
                         #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
                     if str(poseName)=="Dang":
-                        print("Click_Right!!!!")
-                        autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
-                        #pose_Click_Right()
+                        pose_Click_Right()
 
                     poseCount[i]=0
 
@@ -38,7 +36,7 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
 
 
 def pose_Click_left():#OKの時発火
-    print("Click_left!!!!")
+    print("[AutoPy]Click_left")
     #autopy.mouse.click(autopy.mouse.Button.LEFT)
 
 def pose_Click_Right():#グーの時発火

@@ -15,6 +15,7 @@ import gui
 import autopy
 import time
 import PoseAction
+import numpy as np
 
 frame_processed = 0
 score_thresh = 0.18
@@ -222,14 +223,24 @@ if __name__ == '__main__':
     fps = 0
     index = 0
 
+    # define range of blue color in HSV
+    lower_blue = np.array([0, 30, 60])
+    upper_blue = np.array([30, 200, 255])
+
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
     poseCount = [0,0,0,0]
     while True:
         frame = video_capture.read()
         frame = cv2.flip(frame, 1)
         index += 1
+        # Convert BGR to HSV
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV_FULL)
+        # Threshold the HSV image to get only blue colors
+        mask = cv2.inRange(hsv, lower_blue, upper_blue)
+        # Bitwise-AND mask and original image
+        frame_masked = cv2.bitwise_and(hsv,hsv, mask=mask)
 
-        input_q.put(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        input_q.put(cv2.cvtColor(frame_masked, cv2.COLOR_HSV2RGB))
 
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
