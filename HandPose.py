@@ -16,6 +16,7 @@ import autopy
 import time
 import PoseAction
 import numpy as np
+import gamma
 
 frame_processed = 0
 score_thresh = 0.18
@@ -240,7 +241,8 @@ if __name__ == '__main__':
         frame = cv2.flip(frame, 1)
 
         index += 1
-
+        gamma_config = 1.5
+        frame = gamma.gamma_correction(frame,gamma_config)
 
         #画像切り取るかどうか
         frame_cropped_flag = False
