@@ -1,41 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
+<html lang = "ja">
+  <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../css/index.css">
-    <script type="text/javascript" src="/eel.js"></script>
-    <script src="../js/index.js"></script>
-    <title>eel introduction</title>
-</head>
+    <script src ="Cam_detect.js"></script>
+  </head>
+  <body>
+    <select id="device" name ="device" onchange="getVideoDevice()">
+      <option value=""></option>
+    </select></br>
 
-<body>
-    <div class="box">
-        <header>
-            <img src="../image/img.jpg" alt="Himalaya">
-            <link rel="http://google.com"><span class="title">Himalaya</span></link>
-
-        </header>
-
-
-        <section>
-            <h3>eel introduction</h3>
-            <p>We will set the ntp server and ask python to query the current time.
-                Python will query to given ntp server and inform us.</p>
-        </section>
-
-        <section id="form">
-            <label for="ntp">NTP Server</label>
-            <input type="text" name="ntp" id="ntp" placeholder="ntp.nict.jp">
-
-        </section>
-
-        <section>
-            <button onclick="getCurrentTime()">Ask Python</button>
-            <p id="result">----/--/-- --:--:--</p>
-        </section>
-    </div>
-</body>
+    <a href = "Set.html"><button>戻る</button></a>
+    <a href = "Complete.html"><button>確認</button></a>
+  </body>
 </html>
