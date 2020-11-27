@@ -1,5 +1,6 @@
 from utils import detector_utils as detector_utils
 from utils import pose_classification_utils as classifier
+import hand_gui as hgui
 import cv2
 import tensorflow as tf
 import multiprocessing
@@ -224,6 +225,7 @@ if __name__ == '__main__':
     pool = Pool(args.num_workers, worker,
                 (input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed))
 
+    pool = Pool(1, hgui.start_gui,())
     start_time = datetime.datetime.now()
     num_frames = 0
     fps = 0
@@ -268,6 +270,8 @@ if __name__ == '__main__':
 
         #マスク処理済の画像をHSV形式からRGB形式へ変換
         input_q.put(cv2.cvtColor(frame_masked, cv2.COLOR_HSV2RGB))
+
+        # initialize the folder which contents html,js,css,etc
 
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
@@ -336,6 +340,9 @@ if __name__ == '__main__':
         else:
             print("video end")
             break
+
+
+
     elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
     fps = num_frames / elapsed_time
     print("fps", fps)
