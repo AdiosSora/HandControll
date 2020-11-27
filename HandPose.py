@@ -18,7 +18,9 @@ import time
 import PoseAction
 import numpy as np
 import gamma
-
+import hand_gui
+import eel
+import base64
 frame_processed = 0
 score_thresh = 0.18
 
@@ -226,7 +228,8 @@ if __name__ == '__main__':
     pool = Pool(args.num_workers, worker,
                 (input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed))
 
-    pool = Pool(1, hgui.start_gui,())
+    pool2 = Pool(1,hand_gui.start_gui,(output_q, cropped_output_q))
+
     start_time = datetime.datetime.now()
     num_frames = 0
     fps = 0
@@ -243,7 +246,7 @@ if __name__ == '__main__':
         frame = cv2.flip(frame, 1)
 
         index += 1
-        gamma_config = 1.5
+        gamma_config = 1.1
         frame = gamma.gamma_correction(frame,gamma_config)
 
         #画像切り取るかどうか
@@ -300,45 +303,45 @@ if __name__ == '__main__':
             for i in range(3):
                 if(inferences[i] > 0.7):
                     poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
-
-        if (cropped_output is not None):
-            #切り取った画像をBGR形式からRGB形式へ変更する。
-            cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
-            if (args.display > 0):
-                cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
-                cv2.resizeWindow('Cropped', 450, 300)
-                cv2.imshow('Cropped', cropped_output)
-
-                #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-            else:
-                if (num_frames == 400):
-                    num_frames = 0
-                    start_time = datetime.datetime.now()
-                else:
-                    print("frames processed: ", index, "elapsed time: ",
-                          elapsed_time, "fps: ", str(int(fps)))
-
-
-        # print("frame ",  index, num_frames, elapsed_time, fps)
-
-        if (output_frame is not None):
-            output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
-            if (args.display > 0):
-                if (args.fps > 0):
-                    detector_utils.draw_fps_on_image("FPS : " + str(int(fps)),
-                                                     output_frame)
-                cv2.imshow('Handpose', output_frame)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-            else:
-                if (num_frames == 400):
-                    num_frames = 0
-                    start_time = datetime.datetime.now()
-                else:
-                    print("frames processed: ", index, "elapsed time: ",
-                          elapsed_time, "fps: ", str(int(fps)))
+        #
+        # if (cropped_output is not None):
+        #     #切り取った画像をBGR形式からRGB形式へ変更する。
+        #     cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
+        #     if (args.display > 0):
+        #         cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
+        #         cv2.resizeWindow('Cropped', 450, 300)
+        #         cv2.imshow('Cropped', cropped_output)
+        #
+        #         #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
+        #         if cv2.waitKey(1) & 0xFF == ord('q'):
+        #             break
+        #     else:
+        #         if (num_frames == 400):
+        #             num_frames = 0
+        #             start_time = datetime.datetime.now()
+        #         else:
+        #             print("frames processed: ", index, "elapsed time: ",
+        #                   elapsed_time, "fps: ", str(int(fps)))
+        #
+        #
+        # # print("frame ",  index, num_frames, elapsed_time, fps)
+        #
+        # if (output_frame is not None):
+        #     output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
+        #     if (args.display > 0):
+        #         if (args.fps > 0):
+        #             detector_utils.draw_fps_on_image("FPS : " + str(int(fps)),
+        #                                              output_frame)
+        #         cv2.imshow('Handpose', output_frame)
+        #         if cv2.waitKey(1) & 0xFF == ord('q'):
+        #             break
+        #     else:
+        #         if (num_frames == 400):
+        #             num_frames = 0
+        #             start_time = datetime.datetime.now()
+        #         else:
+        #             print("frames processed: ", index, "elapsed time: ",
+        #                   elapsed_time, "fps: ", str(int(fps)))
         else:
             print("video end")
             break
