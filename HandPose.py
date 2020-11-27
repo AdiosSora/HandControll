@@ -241,12 +241,20 @@ if __name__ == '__main__':
 
         index += 1
 
+
+        #画像切り取るかどうか
+        frame_cropped_flag = False
         #画面サイズを縮小させ稼働領域の調整を行う
         #各パラメーターに値を入力することで画像サイズを小さくできる
-        left_params = int(cap_params['im_width'])//20
-        top_params = int(cap_params['im_height'])//20
-        right_params = int(cap_params['im_width'])-(int(cap_params['im_width'])//20)
-        bottom_params = int(cap_params['im_height'])-(int(cap_params['im_height'])//20)
+        if(frame_cropped_flag == True):
+            left_params = int(cap_params['im_width'])//20
+            top_params = int(cap_params['im_height'])//20
+            right_params = int(cap_params['im_width'])-(int(cap_params['im_width'])//20)
+            bottom_params = int(cap_params['im_height'])-(int(cap_params['im_height'])//20)
+
+            #キャプチャした画像の切り取り
+            frame = frame[top_params:bottom_params,left_params:right_params].copy()
+            # frame = frame[0:50,0:50].copy()
 
         #背景切り抜きの為画像形式をBGRからHSVへ変更
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV_FULL)
@@ -256,8 +264,7 @@ if __name__ == '__main__':
         frame_masked = cv2.bitwise_and(hsv,hsv, mask=mask)
 
         # print(left_params,top_params,right_params,bottom_params)
-        #キャプチャした画像の切り取り
-        frame = frame[top_params:bottom_params,left_params:right_params].copy()
+
 
         #マスク処理済の画像をHSV形式からRGB形式へ変換
         input_q.put(cv2.cvtColor(frame_masked, cv2.COLOR_HSV2RGB))
