@@ -45,21 +45,13 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
         #print("> ===== in worker loop, frame ", frame_processed)
         frame = input_q.get()
         if (frame is not None):
-            # Actual detection. Variable boxes contains the bounding box cordinates for hands detected,
-            # while scores contains the confidence for each of these boxes.
-            # Hint: If len(boxes) > 1 , you may assume you have found atleast one hand (within your score threshold)
             #実際の検出。 変数ボックスには、検出された手の境界ボックスの座標が含まれています。
             #スコアには、これらの各ボックスの信頼度が含まれています。
             #ヒント：len（boxes）> 1の場合、（スコアのしきい値内で）少なくとも片方の手を見つけたと見なすことができます。
             boxes, scores = detector_utils.detect_objects(
                 frame, detection_graph, sess)
-                #p1=(int(cap_params['im_width'])//20,int(cap_params['im_height'])//20)
-                #p2=(int(cap_params['im_width'])-(int(cap_params['im_width'])//20),int(cap_params['im_height'])-(int(cap_params['im_height'])//20))
 
-            # get region of interest
             #関心領域を取得
-            # res = detector_utils.get_box_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
-            #     scores, boxes, cap_params['im_width'], cap_params['im_height'], frame)
             #フレームの画像サイズを取得
             cropped_height,cropped_width,a = frame.shape[:3]
             res = detector_utils.get_box_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
@@ -91,13 +83,11 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
                 #取得した座標(p1,p2)を挿入
                 pointX_q.put(p1)
                 pointY_q.put(p2)
-            # classify hand pose
             #手のポーズを分類する
             if res is not None:
                 class_res = classifier.classify(model, classification_graph, session, res)
                 inferences_q.put(class_res)
 
-            # add frame annotated with bounding box to queue
             #バウンディングボックスで注釈が付けられたフレームをキューに追加
             cropped_output_q.put(res)
             output_q.put(frame)
@@ -228,7 +218,7 @@ if __name__ == '__main__':
     pool = Pool(args.num_workers, worker,
                 (input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed))
 
-    pool2 = Pool(1,hand_gui.start_gui,(output_q, cropped_output_q))
+    #pool2 = Pool(1,hand_gui.start_gui,(output_q, cropped_output_q))
 
     start_time = datetime.datetime.now()
     num_frames = 0
@@ -303,45 +293,45 @@ if __name__ == '__main__':
             for i in range(3):
                 if(inferences[i] > 0.7):
                     poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
-        #
-        # if (cropped_output is not None):
-        #     #切り取った画像をBGR形式からRGB形式へ変更する。
-        #     cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
-        #     if (args.display > 0):
-        #         cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
-        #         cv2.resizeWindow('Cropped', 450, 300)
-        #         cv2.imshow('Cropped', cropped_output)
-        #
-        #         #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
-        #         if cv2.waitKey(1) & 0xFF == ord('q'):
-        #             break
-        #     else:
-        #         if (num_frames == 400):
-        #             num_frames = 0
-        #             start_time = datetime.datetime.now()
-        #         else:
-        #             print("frames processed: ", index, "elapsed time: ",
-        #                   elapsed_time, "fps: ", str(int(fps)))
-        #
-        #
-        # # print("frame ",  index, num_frames, elapsed_time, fps)
-        #
-        # if (output_frame is not None):
-        #     output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
-        #     if (args.display > 0):
-        #         if (args.fps > 0):
-        #             detector_utils.draw_fps_on_image("FPS : " + str(int(fps)),
-        #                                              output_frame)
-        #         cv2.imshow('Handpose', output_frame)
-        #         if cv2.waitKey(1) & 0xFF == ord('q'):
-        #             break
-        #     else:
-        #         if (num_frames == 400):
-        #             num_frames = 0
-        #             start_time = datetime.datetime.now()
-        #         else:
-        #             print("frames processed: ", index, "elapsed time: ",
-        #                   elapsed_time, "fps: ", str(int(fps)))
+        
+        if (cropped_output is not None):
+            #切り取った画像をBGR形式からRGB形式へ変更する。
+            cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
+            if (args.display > 0):
+                cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
+                cv2.resizeWindow('Cropped', 450, 300)
+                cv2.imshow('Cropped', cropped_output)
+
+                #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            else:
+                if (num_frames == 400):
+                    num_frames = 0
+                    start_time = datetime.datetime.now()
+                else:
+                    print("frames processed: ", index, "elapsed time: ",
+                          elapsed_time, "fps: ", str(int(fps)))
+
+
+        # print("frame ",  index, num_frames, elapsed_time, fps)
+
+        if (output_frame is not None):
+            output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
+            if (args.display > 0):
+                if (args.fps > 0):
+                    detector_utils.draw_fps_on_image("FPS : " + str(int(fps)),
+                                                     output_frame)
+                cv2.imshow('Handpose', output_frame)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            else:
+                if (num_frames == 400):
+                    num_frames = 0
+                    start_time = datetime.datetime.now()
+                else:
+                    print("frames processed: ", index, "elapsed time: ",
+                          elapsed_time, "fps: ", str(int(fps)))
         else:
             print("video end")
             break
