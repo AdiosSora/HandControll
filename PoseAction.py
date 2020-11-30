@@ -1,4 +1,5 @@
 import autopy
+import tkinter as tk
 
 def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズがどれかを判定し、それぞれのイベントを発火する。
     # global i
@@ -9,19 +10,29 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
     #dropswitch=0
     for tmp in Namelist:
         if(str(Namelist[i])==str(poseName)and poseName!="Garbage"):
-            poseCount[i]+=1
+            #poseCount[i]+=1
             print(poseCount)
 
             #識別が50を超えたか識別。
             for l in poseCount:
-                if(l<=50 and poseName=="Dang"):
-                    #if(poseCount[3]==0)
-                        #poseCount[3]+=1
-                    if(poseCount[3]==1):
-                        pointerMove(x,y)
+                if(poseName=="Dang"):
+                    if(poseCount[4] <= 10 and l <= 10):
+                        if(poseCount[4]==0):
+                            poseCount[4]+=1
+                            poseCount[i]+=1
+                        else:
+                            pose_Click_left(l)
+                            poseCount[4]=0
+                            poseCount[i]=0
+                    if(poseCount[4]>10 or l >10):
+                        if(poseCount[3]==1):
+                            print("clicl!!")
+                            #pointerMove(x,y)
+                        else:
+                            poseCount[3]=1
+                            pose_Drag(l)
 
-                    poseCount[3]=1
-                    pose_Drag(l)
+
 
                 #elif(l<=10 and poseName=="Dang"):
                     #and poseCount[3]==0
@@ -38,12 +49,12 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
 
                         #pointerMove()
                         #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
-                    if str(poseName)=="Dang":
-                        pose_Click_Right()
+                    #if str(poseName)=="Dang":
+                        #pose_Click_Right()
 
                 elif (poseName=="Palm"):
                     pointerMove(x,y)
-                poseCount[i]=0
+                #poseCount[i]=0
 
             # return poseCount
             #todo(switch文で)
@@ -55,27 +66,27 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
 
 def pose_Click_left(l):
     print("Click_left!!!!")
-    autopy.mouse.click(autopy.mouse.Button.LEFT)
+    #autopy.mouse.click(autopy.mouse.Button.LEFT)
 
 def pose_doubleClick_left():
     print("Click_left!!!!")
-    autopy.mouse.click(autopy.mouse.Button.LEFT)
-    autopy.mouse.click(autopy.mouse.Button.LEFT)
+    #autopy.mouse.click(autopy.mouse.Button.LEFT)
+    #autopy.mouse.click(autopy.mouse.Button.LEFT)
 
 def pose_Drag(l):
     print("Drag!!!!")
-    autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
+    #autopy.mouse.toggle(autopy.mouse.Button.LEFT,True)
     l=0
 
 def pose_Drop(l):
     print("Drop!!!!")
-    autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+    #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
     l=0
 
 def pointerMove(x,y):
     print("pointerMove!!!!")
     try:
         autopy.mouse.move(x,y)
-        autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+        #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
     except:
         print("outof")
