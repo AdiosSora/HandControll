@@ -25,6 +25,7 @@ frame_processed = 0
 score_thresh = 0.18
 
 
+
 # Create a worker thread that loads graph and
 # does detection on images in an input queue and puts it on an output queue
 #グラフをロードするワーカースレッドを作成し、
@@ -230,7 +231,7 @@ if __name__ == '__main__':
     upper_blue = np.array([30, 200, 255])
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
-    poseCount = [0,0,0,0]
+    poseCount = [0,0,0,0,0]
     while True:
         frame = video_capture.read()
         frame = cv2.flip(frame, 1)
@@ -293,7 +294,7 @@ if __name__ == '__main__':
             for i in range(3):
                 if(inferences[i] > 0.7):
                     poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
-        
+
         if (cropped_output is not None):
             #切り取った画像をBGR形式からRGB形式へ変更する。
             cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
