@@ -1,5 +1,6 @@
 from utils import detector_utils as detector_utils
 from utils import pose_classification_utils as classifier
+import hand_gui as hgui
 import cv2
 import tensorflow as tf
 import multiprocessing
@@ -17,9 +18,12 @@ import time
 import PoseAction
 import numpy as np
 import gamma
-
+import hand_gui
+import eel
+import base64
 frame_processed = 0
 score_thresh = 0.18
+
 
 
 # Create a worker thread that loads graph and
@@ -42,21 +46,13 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
         #print("> ===== in worker loop, frame ", frame_processed)
         frame = input_q.get()
         if (frame is not None):
-            # Actual detection. Variable boxes contains the bounding box cordinates for hands detected,
-            # while scores contains the confidence for each of these boxes.
-            # Hint: If len(boxes) > 1 , you may assume you have found atleast one hand (within your score threshold)
             #実際の検出。 変数ボックスには、検出された手の境界ボックスの座標が含まれています。
             #スコアには、これらの各ボックスの信頼度が含まれています。
             #ヒント：len（boxes）> 1の場合、（スコアのしきい値内で）少なくとも片方の手を見つけたと見なすことができます。
             boxes, scores = detector_utils.detect_objects(
                 frame, detection_graph, sess)
-                #p1=(int(cap_params['im_width'])//20,int(cap_params['im_height'])//20)
-                #p2=(int(cap_params['im_width'])-(int(cap_params['im_width'])//20),int(cap_params['im_height'])-(int(cap_params['im_height'])//20))
 
-            # get region of interest
             #関心領域を取得
-            # res = detector_utils.get_box_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
-            #     scores, boxes, cap_params['im_width'], cap_params['im_height'], frame)
             #フレームの画像サイズを取得
             cropped_height,cropped_width,a = frame.shape[:3]
             res = detector_utils.get_box_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
@@ -88,13 +84,11 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
                 #取得した座標(p1,p2)を挿入
                 pointX_q.put(p1)
                 pointY_q.put(p2)
-            # classify hand pose
             #手のポーズを分類する
             if res is not None:
                 class_res = classifier.classify(model, classification_graph, session, res)
                 inferences_q.put(class_res)
 
-            # add frame annotated with bounding box to queue
             #バウンディングボックスで注釈が付けられたフレームをキューに追加
             cropped_output_q.put(res)
             output_q.put(frame)
@@ -225,6 +219,8 @@ if __name__ == '__main__':
     pool = Pool(args.num_workers, worker,
                 (input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed))
 
+    #pool2 = Pool(1,hand_gui.start_gui,(output_q, cropped_output_q))
+
     start_time = datetime.datetime.now()
     num_frames = 0
     fps = 0
@@ -235,7 +231,7 @@ if __name__ == '__main__':
     upper_blue = np.array([30, 200, 255])
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
-    poseCount = [0,0,0,0]
+    poseCount = [0,0,0,0,0]
     while True:
         frame = video_capture.read()
         frame = cv2.flip(frame, 1)
@@ -272,6 +268,8 @@ if __name__ == '__main__':
 
         #マスク処理済の画像をHSV形式からRGB形式へ変換
         input_q.put(cv2.cvtColor(frame_masked, cv2.COLOR_HSV2RGB))
+
+        # initialize the folder which contents html,js,css,etc
 
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
@@ -340,6 +338,9 @@ if __name__ == '__main__':
         else:
             print("video end")
             break
+
+
+
     elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
     fps = num_frames / elapsed_time
     print("fps", fps)
