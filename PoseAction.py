@@ -1,5 +1,7 @@
 import autopy
 
+history_x = 0
+history_y = 0
 def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズがどれかを判定し、それぞれのイベントを発火する。
     # global i
     # if not poseCount:
@@ -9,7 +11,7 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
     if poseName=="Palm":
             pointerMove(x,y)
             print("out ob bound　ポインター")
-        return poseCount
+    return poseCount
     for tmp in Namelist:
         if(str(Namelist[i])==str(poseName)and poseName!="Garbage"):
             poseCount[i]+=1
@@ -77,8 +79,16 @@ def pose_Drop(l):
 
 def pointerMove(x,y):
     print("pointerMove!!!!")
+    global history_x
+    global history_y
     try:
-        autopy.mouse.move(x,y)
-        autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+        #座標移動安定化するためしきい値を設定
+        if(abs(history_x-x)>20 or abs(history_y-y)>20):
+            if(abs(history_x-x)<200 or abs(history_y-y)<200):
+                autopy.mouse.move(x,y)
+                autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+                history_x = x
+                history_y = y
+
     except:
         print("outof")

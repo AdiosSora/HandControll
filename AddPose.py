@@ -3,6 +3,7 @@ import cv2
 import os
 from utils import detector_utils as detector_utils
 import tensorflow as tf
+import gamma
 
 def main():
     currentPath = ''
@@ -172,7 +173,10 @@ def main():
                 # Bitwise-AND mask and original image
                 frame_masked = cv2.bitwise_and(hsv,hsv, mask=mask)
 
-                cv2.imwrite(currentPath + currentExample + str(_iter) + '.png', cv2.cvtColor(frame_masked, cv2.COLOR_HSV2BGR))
+                frame = cv2.cvtColor(frame_masked, cv2.COLOR_HSV2BGR)
+
+                frame = gamma.gamma_correction(frame,1.5)
+                cv2.imwrite(currentPath + currentExample + str(_iter) + '.png', frame)
 
             _iter += 1
         # Break the loop
