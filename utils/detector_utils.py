@@ -79,6 +79,7 @@ def get_box_image(num_hands_detect, score_thresh, scores, boxes, im_width, im_he
             return image_np[int(top):int(bottom), int(left):int(right)].copy()
 
 
+
 # Show fps value on image.
 #画像にfps値を表示します。
 def draw_fps_on_image(fps, image_np):

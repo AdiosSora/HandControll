@@ -1,5 +1,6 @@
 from utils import detector_utils as detector_utils
 from utils import pose_classification_utils as classifier
+import hand_gui as hgui
 import cv2
 import tensorflow as tf
 import multiprocessing
@@ -14,29 +15,24 @@ import keras
 import gui
 import autopy
 import time
-p1 = 0
-p2 = 0
-p3 = 0
-p4 = 0
-p5 = 0
-p6 = 0
-
+import PoseAction
+import numpy as np
+import gamma
+import hand_gui
+import eel
+import base64
 frame_processed = 0
 score_thresh = 0.18
+
+
 
 # Create a worker thread that loads graph and
 # does detection on images in an input queue and puts it on an output queue
 #グラフをロードするワーカースレッドを作成し、
 #入力キュー内の画像を検出し、出力キューに配置します
 
-def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed):
-    global p1
-    global p2
-    global p3
-    global p4
-    global p5
-    global p6
 
+def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed):
     print(">> loading frozen model for worker")
     detection_graph, sess = detector_utils.load_inference_graph()
     sess = tf.Session(graph=detection_graph)
@@ -46,76 +42,54 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_
         model, classification_graph, session = classifier.load_KerasGraph("cnn/models/hand_poses_wGarbage_10.h5")
     except Exception as e:
         print(e)
-
     while True:
 
         #print("> ===== in worker loop, frame ", frame_processed)
         frame = input_q.get()
         if (frame is not None):
-            # Actual detection. Variable boxes contains the bounding box cordinates for hands detected,
-            # while scores contains the confidence for each of these boxes.
-            # Hint: If len(boxes) > 1 , you may assume you have found atleast one hand (within your score threshold)
             #実際の検出。 変数ボックスには、検出された手の境界ボックスの座標が含まれています。
             #スコアには、これらの各ボックスの信頼度が含まれています。
             #ヒント：len（boxes）> 1の場合、（スコアのしきい値内で）少なくとも片方の手を見つけたと見なすことができます。
             boxes, scores = detector_utils.detect_objects(
                 frame, detection_graph, sess)
 
-            #判定領域のイメージ
-            cv2.rectangle(frame, (int(cap_params['im_width'])//20,int(cap_params['im_height'])//20),
-                        (int(cap_params['im_width'])-(int(cap_params['im_width'])//20),int(cap_params['im_height'])-(int(cap_params['im_height'])//20)),
-                        (255, 9, 1), 1, 1)
-            # get region of interest
             #関心領域を取得
+            #フレームの画像サイズを取得
+            cropped_height,cropped_width,a = frame.shape[:3]
             res = detector_utils.get_box_image(cap_params['num_hands_detect'], cap_params["score_thresh"],
-                scores, boxes, cap_params['im_width'], cap_params['im_height'], frame)
+                scores, boxes, cropped_width,cropped_height, frame)
 
             #手の判定が一定値を超えたとき
             if (scores[0] > score_thresh):
-                (left, right, top, bottom) = (boxes[0][1] * cap_params['im_width'], boxes[0][3] * cap_params['im_width'],
-                                              boxes[0][0] * cap_params['im_height'], boxes[0][2] * cap_params['im_height'])
+                (left, right, top, bottom) = (boxes[0][1] * cropped_width, boxes[0][3] * cropped_width,
+                                              boxes[0][0] * cropped_height, boxes[0][2] * cropped_height)
 
                 #ウィンドウサイズを取得
                 width,height = autopy.screen.size()
 
                 #画面比率変数設定
-                wx = (width + ((int(right)-int(left)))*(width / cap_params['im_width'])) / cap_params['im_width']
-                hx = (height + ((int(bottom)-int(top)))*(height / cap_params['im_height'])) / cap_params['im_height']
+                # wx = (width + (int(right)-int(left))*(width / cap_params['im_width'])) / cap_params['im_width']
+                #
+                # hx = (height + (int(bottom)-int(top))*(height / cap_params['im_height'])) / cap_params['im_height']
+                wx = (width + (int(right)-int(left))*(width / cropped_width)) / (cropped_width-20)
 
-                #手の判定サイズの中点を変数へ設定
-                p1 = ((int(left)+((int(right)-int(left))//2))*wx)-(int(left)+((int(right)-int(left))//2))
-                p2 = ((int(top)+((int(bottom)-int(top))//2))*hx)-(int(top)+((int(bottom)-int(top))//2))
-
+                hx = (height + (int(bottom)-int(top))*(height / cropped_height)) / (cropped_height-20)
+                p1 = int(left)*wx
+                p2 = int(bottom)*hx-(int(bottom)*hx-int(top)*hx)
 
                 #判定した手の範囲を表示
                 fp = (int(left),int(top))
                 ep = (int(right),int(bottom))
                 cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
-                #前回のマウス座標と今回のマウス座標の差を抽出
-                p5 = p1-p3
-                p6 = p2-p4
 
-                #マウス操作
-                #try:
-                    #差の絶対値が１２以上なら移動させる
-                #    if(abs(p5)>12 or abs(p6)>12):
-                #        print(p1,p2,p3,p4,p5,p6)
-                #        autopy.mouse.move(p1,p2)
-                #        p3 = p1
-                #        p4 = p2
-
-
-                #except ValueError:
-                #        print('Out of bounds')
-
-
-            # classify hand pose
+                #取得した座標(p1,p2)を挿入
+                pointX_q.put(p1)
+                pointY_q.put(p2)
             #手のポーズを分類する
             if res is not None:
                 class_res = classifier.classify(model, classification_graph, session, res)
                 inferences_q.put(class_res)
 
-            # add frame annotated with bounding box to queue
             #バウンディングボックスで注釈が付けられたフレームをキューに追加
             cropped_output_q.put(res)
             output_q.put(frame)
@@ -184,7 +158,7 @@ if __name__ == '__main__':
         default=1,
         help='Display the detected images using OpenCV. This reduces FPS')
 
-    #???
+    #ワーカーが同時に動く数を設定。
     parser.add_argument(
         '-num-w',
         '--num-workers',
@@ -193,7 +167,7 @@ if __name__ == '__main__':
         default=4,
         help='Number of workers.')
 
-    #FIFO Queueの最大サイズ
+    #FIFO Queueの最大サイズを設定。
     parser.add_argument(
         '-q-size',
         '--queue-size',
@@ -211,35 +185,30 @@ if __name__ == '__main__':
     cropped_output_q    = Queue(maxsize=args.queue_size)
     inferences_q        = Queue(maxsize=args.queue_size)
 
+    pointX_q = Queue(maxsize=args.queue_size)#worker内のp1用
+    pointY_q = Queue(maxsize=args.queue_size)#worker内のp2用
+
     #初期設定したargsパーサーからWebカメラの指定及びサイズを取得
     video_capture = WebcamVideoStream(
         src=args.video_source, width=args.width, height=args.height).start()
 
     cap_params = {}
     frame_processed = 0
-
-    #キャプチャーしたビデオの縦幅、横幅をcap_params配列に代入
     cap_params['im_width'], cap_params['im_height'] = video_capture.size()
     print(cap_params['im_width'], cap_params['im_height'])
-
-    #手の信頼地をcap_params配列に代入
     cap_params['score_thresh'] = score_thresh
 
+    # max number of hands we want to detect/track
     #検出/追跡する手の最大数
     cap_params['num_hands_detect'] = args.num_hands
 
     print(cap_params, args)
 
-    #ポーズサンプル配列を定義
+    # Count number of files to increment new example directory
+    #新しいサンプルディレクトリをインクリメントするファイルの数を数える
     poses = []
-
-    #テキストファイルを開く
     _file = open("poses.txt", "r")
-
-    #テキストファイルを行ごとに分けて代入する。
     lines = _file.readlines()
-
-    #テキストファイルの行分ループし、poses配列にポーズ名を追加
     for line in lines:
         line = line.strip()
         if(line != ""):
@@ -247,102 +216,118 @@ if __name__ == '__main__':
             poses.append(line)
 
 
-    #Pool関数でワーカーを並列実行し、引数を渡す。
+    # spin up workers to paralleize detection.
+    #ワーカーをスピンアップして検出を並列化します。
     pool = Pool(args.num_workers, worker,
-               (input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed))
+                (input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed))
 
-    #現在時刻を取得
+    #pool2 = Pool(1,hand_gui.start_gui,(output_q, cropped_output_q))
+
     start_time = datetime.datetime.now()
-    #フレーム数初期化
     num_frames = 0
-    #FPS値初期化
     fps = 0
     index = 0
 
-    #ウィンドウを作成(ユーザーがウィンドウサイズ指定可能)
+    # 切り抜く色範囲の上限下限を設定
+    lower_blue = np.array([0, 30, 60])
+    upper_blue = np.array([30, 200, 255])
+
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
-
-    #終了ボタンが押されるまでループ
+    poseCount = [0,0,0,0,0]
     while True:
-        #読み込んだ一番最新のフレームをframe関数に代入
         frame = video_capture.read()
-        #フレームを左右反転
         frame = cv2.flip(frame, 1)
-        #index変数をインクリメントする
+
         index += 1
-        #BGRからRGBへframeの画像を変換し、input_qへ追加
-        input_q.put(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        gamma_config = 1.1
+        frame = gamma.gamma_correction(frame,gamma_config)
 
-        #Worker関数から出力された output_qからoputput_frameに代入
+        #画像切り取るかどうか
+        frame_cropped_flag = False
+        #画面サイズを縮小させ稼働領域の調整を行う
+        #各パラメーターに値を入力することで画像サイズを小さくできる
+        if(frame_cropped_flag == True):
+            left_params = int(cap_params['im_width'])//20
+            top_params = int(cap_params['im_height'])//20
+            right_params = int(cap_params['im_width'])-(int(cap_params['im_width'])//20)
+            bottom_params = int(cap_params['im_height'])-(int(cap_params['im_height'])//20)
+
+            #キャプチャした画像の切り取り
+            frame = frame[top_params:bottom_params,left_params:right_params].copy()
+            # frame = frame[0:50,0:50].copy()
+
+        #背景切り抜きの為画像形式をBGRからHSVへ変更
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV_FULL)
+        #設定した色範囲を塗りつぶしたマスク画像を生成
+        mask = cv2.inRange(hsv, lower_blue, upper_blue)
+        #生成したマスクで通常画像を切り抜き
+        frame_masked = cv2.bitwise_and(hsv,hsv, mask=mask)
+
+        # print(left_params,top_params,right_params,bottom_params)
+
+
+        #マスク処理済の画像をHSV形式からRGB形式へ変換
+        input_q.put(cv2.cvtColor(frame_masked, cv2.COLOR_HSV2RGB))
+
+        # initialize the folder which contents html,js,css,etc
+
         output_frame = output_q.get()
-
-        #Worker関数から出力された cropped_output_qからcropped_outputに代入
         cropped_output = cropped_output_q.get()
 
-        #inferences変数初期化
         inferences      = None
 
-
         try:
-            #キューの内容を変数に代入しキューから要素を削除
             inferences = inferences_q.get_nowait()
-            # print(inferences)
-            #例外を無視
         except Exception as e:
             pass
 
-        #フレームレート計算
         elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
         num_frames += 1
         fps = num_frames / elapsed_time
 
-
         # Display inferences
-        #推論を表示する
-        #手のポーズとその予想を表示
+        #ポーズの手の形の推測グラフを表示する
         if(inferences is not None):
-            print(p1)
-            gui.drawInferences(inferences, p1, p2, p3, p4, p5, p6, poses)
+            #worker関数内のp1,p2の値を代入
+            x = pointX_q.get_nowait()
+            y = pointY_q.get_nowait()
+            gui.drawInferences(inferences,poseCount, poses)
+            #ポーズの形の信頼地が0.7を超えたらアクションを実行する
+            for i in range(3):
+                if(inferences[i] > 0.7):
+                    poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
 
-        #認識した手を切り取り別ウィンドウで表示
-
-        #if (cropped_output is not None):
-            # cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
-             #if (args.display > 0):
-                #cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
-                #cv2.resizeWindow('Cropped', 450, 300)
-                #cv2.imshow('Cropped', cropped_output)
+        if (cropped_output is not None):
+            #切り取った画像をBGR形式からRGB形式へ変更する。
+            cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
+            if (args.display > 0):
+                cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
+                cv2.resizeWindow('Cropped', 450, 300)
+                cv2.imshow('Cropped', cropped_output)
 
                 #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
-                #if cv2.waitKey(1) & 0xFF == ord('q'):
-                    # break
-             #else:
-                # if (num_frames == 400):
-                    # num_frames = 0
-                    # start_time = datetime.datetime.now()
-                 #else:
-                    # print("frames processed: ", index, "elapsed time: ",
-                         #  elapsed_time, "fps: ", str(int(fps)))
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            else:
+                if (num_frames == 400):
+                    num_frames = 0
+                    start_time = datetime.datetime.now()
+                else:
+                    print("frames processed: ", index, "elapsed time: ",
+                          elapsed_time, "fps: ", str(int(fps)))
 
 
-        #print("frame ",  index, num_frames, elapsed_time, fps)
+        # print("frame ",  index, num_frames, elapsed_time, fps)
 
-        #FPSをwindowに表示する
         if (output_frame is not None):
-            #print(output_frame)
             output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
             if (args.display > 0):
                 if (args.fps > 0):
                     detector_utils.draw_fps_on_image("FPS : " + str(int(fps)),
                                                      output_frame)
-
-                #画像ファイルを読み込む　imshow(読み込む画像、画像の読み込み方法指定)
                 cv2.imshow('Handpose', output_frame)
-
-                #qキーが入力されたとき終了させる
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
-
             else:
                 if (num_frames == 400):
                     num_frames = 0
@@ -353,12 +338,12 @@ if __name__ == '__main__':
         else:
             print("video end")
             break
-    #fps値を計算し出力
+
+
+
     elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
     fps = num_frames / elapsed_time
     print("fps", fps)
-    #実行中の処理を完了させずにワーカープロセスをすぐに停止
     pool.terminate()
-    #終了処理
     video_capture.stop()
     cv2.destroyAllWindows()

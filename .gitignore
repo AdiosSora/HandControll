@@ -46,7 +46,7 @@ nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
-Poses
+
 # Translations
 *.mo
 *.pot
@@ -96,8 +96,6 @@ egohands_data.zip
 images/test/
 images/train/
 samples/
+Poses/
 .vscode/launch.json
 Dataset/
-
-#
-cnn/hand_poses_wGarbage_10.h5

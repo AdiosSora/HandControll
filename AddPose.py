@@ -16,7 +16,7 @@ def main():
     while(menu_choice != '1' and menu_choice != '2' and menu_choice != '3'):
         print('Please enter 1 or 2')
         menu_choice = input()
-    #キーボードに１が押された時の処理
+
     if(menu_choice == '1'):
         print('Enter a name for the pose you want to add :')
         name_pose = input()
@@ -27,7 +27,7 @@ def main():
             os.makedirs('Poses/' + name_pose + '/' + name_pose + '_1/')
             currentPath = 'Poses/' + name_pose + '/' + name_pose + '_1/'
             currentExample = name_pose + '_1_'
-    #キーボードに2が押された時の処理
+
     elif(menu_choice == '2'):
         # Display current poses
         #現在のポーズを表示する
@@ -89,7 +89,7 @@ def main():
                 currentExample ='Garbage_' + str(index) + '_'
                 name_pose = 'Garbage'
 
-    #注釈
+
     print('You\'ll now be prompted to record the pose you want to add. \n \
                 Please place your hand beforehand facing the camera, and press any key when ready. \n \
                 When finished press \'q\'.')
@@ -137,6 +137,7 @@ def main():
     print('>> model loaded!')
 
     _iter = 1
+
     # Read until video is completed
     #ビデオが完成するまで読む
     while(vid.isOpened()):
@@ -162,7 +163,16 @@ def main():
             # Save cropped image
             #トリミングした画像を保存する
             if(res is not None):
-                cv2.imwrite(currentPath + currentExample + str(_iter) + '.png', cv2.cvtColor(res, cv2.COLOR_RGB2BGR))
+
+                hsv = cv2.cvtColor(res, cv2.COLOR_RGB2HSV_FULL)
+                # Threshold the HSV image to get only blue colors
+                lower_blue = np.array([0, 30, 60])
+                upper_blue = np.array([30, 200, 255])
+                mask = cv2.inRange(hsv, lower_blue, upper_blue)
+                # Bitwise-AND mask and original image
+                frame_masked = cv2.bitwise_and(hsv,hsv, mask=mask)
+
+                cv2.imwrite(currentPath + currentExample + str(_iter) + '.png', cv2.cvtColor(frame_masked, cv2.COLOR_HSV2BGR))
 
             _iter += 1
         # Break the loop
