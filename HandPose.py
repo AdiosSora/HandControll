@@ -239,7 +239,9 @@ if __name__ == '__main__':
         frame = cv2.flip(frame, 1)
 
         index += 1
-        gamma_config = 1.1
+        #明るさの度合いを変更する数値
+        gamma_config = 1.5
+        #画像の明るさ変更
         frame = gamma.gamma_correction(frame,gamma_config)
 
         #画像切り取るかどうか
@@ -297,7 +299,7 @@ if __name__ == '__main__':
             y = pointY_q.get_nowait()
             gui.drawInferences(inferences,poseCount, poses)
             #ポーズの形の信頼地が0.7を超えたらアクションを実行する
-            for i in range(3):
+            for i in range(len(poses)):
                 if(inferences[i] > 0.7):
                     poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
 
@@ -308,8 +310,8 @@ if __name__ == '__main__':
                 cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
                 cv2.resizeWindow('Cropped', 450, 300)
                 cv2.imshow('Cropped', cropped_output)
-
-                #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
+                #学習データとして保存
+                #cv2.imwrite('Poses/Rock/Rock_3/Rock_1_' + str(num_frames) + '.png', cropped_output)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
             else:
