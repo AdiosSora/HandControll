@@ -293,7 +293,7 @@ if __name__ == '__main__':
             y = pointY_q.get_nowait()
             gui.drawInferences(inferences,poseCount, poses)
             #ポーズの形の信頼地が0.7を超えたらアクションを実行する
-            for i in range(3):
+            for i in range(len(poses)):
                 if(inferences[i] > 0.7):
                     poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
 

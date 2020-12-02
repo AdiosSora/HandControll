@@ -31,8 +31,8 @@ def drawInferences(values, poseCount, names=['', '', '','','']):
 
 #コマンドラインで実行されたときのみ実行される
 def test():
-    values = [0,0,0,0]
-    names = ['Garbage','Ok','Palm','Rock']
+    values = [0,0,0,0,0]
+    names = ['Dang','Garbage','Peace','Palm','Rock']
 
     while(True):
 
