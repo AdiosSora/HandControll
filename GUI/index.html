@@ -1,21 +1,15 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <script type="text/javascript" src="/eel.js"></script>
 
-        <script>
-            eel.expose(set_elapsedtime);
-            function set_elapsedtime(elapsedtime) {
-                document.getElementById("elapsedtime").innerHTML = "elapsedtime:" + elapsedtime + "s";
-            }
-            eel.expose(set_base64image);
-            function set_base64image(base64image) {
-                document.getElementById("python_video").src = base64image;
-            }
-        </script>
     </head>
     <body>
         <div id="elapsedtime">elapsedtime</div>
-        <img id="python_video" width="640" height="480" src="./image/sample.png">
+
+        <br>
+        <br>
+        <script type="text/javascript" src="/eel.js"></script>
+        <script src="index.js"></script>
+        <img id="python_video2" width="640" height="480"src="./image/sample.png">
     </body>
 </html>

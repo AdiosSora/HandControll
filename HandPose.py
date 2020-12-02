@@ -271,8 +271,12 @@ if __name__ == '__main__':
 
         # initialize the folder which contents html,js,css,etc
 
+        hand_gui.start_gui(output_q)
+
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
+
+        #hand_gui.start_gui(output_frame)
 
         inferences      = None
 
