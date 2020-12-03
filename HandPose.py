@@ -236,10 +236,6 @@ if __name__ == '__main__':
     poseCount = [0,0,0,0,0]
     cnt_gui=0   #hand_guiにてeelを動かす用に使用
 
-    #eel.init("GUI")
-    #eel.spawn(worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed))
-    #eel.start('index.html', block = False)
-
     while True:
         frame = video_capture.read()
         frame = cv2.flip(frame, 1)
@@ -276,10 +272,6 @@ if __name__ == '__main__':
         input_q.put(cv2.cvtColor(frame_masked, cv2.COLOR_HSV2RGB))
 
         # initialize the folder which contents html,js,css,etc
-
-        #hand_gui.start_gui(output_q)
-
-        #pool2 = Pool(1,hand_gui.start_gui,(output_q, cropped_output_q))
 
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
