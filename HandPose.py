@@ -221,7 +221,7 @@ if __name__ == '__main__':
     pool = Pool(args.num_workers, worker,
                 (input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed))
 
-    pool2 = Pool(1,hand_gui.start_gui,(output_q, cropped_output_q))
+    #pool2 = Pool(1,hand_gui.start_gui,(output_q, cropped_output_q))
 
     start_time = datetime.datetime.now()
     num_frames = 0
@@ -234,7 +234,12 @@ if __name__ == '__main__':
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
     poseCount = [0,0,0,0,0]
-    #cnt_gui=0
+    cnt_gui=0   #hand_guiにてeelを動かす用に使用
+
+    #eel.init("GUI")
+    #eel.spawn(worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed))
+    #eel.start('index.html', block = False)
+
     while True:
         frame = video_capture.read()
         frame = cv2.flip(frame, 1)
@@ -279,7 +284,8 @@ if __name__ == '__main__':
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
 
-        #cnt_gui = hand_gui.start_gui(output_frame, cnt_gui)
+        #hand_gui.start_gui(output_frame)
+        cnt_gui = hand_gui.start_gui(output_frame, cnt_gui)
 
         inferences      = None
 
@@ -327,6 +333,11 @@ if __name__ == '__main__':
         # print("frame ",  index, num_frames, elapsed_time, fps)
 
         if (output_frame is not None):
+
+#            _, imencode_image = cv2.imencode('.jpg', output_frame)
+#            base64_image2 = base64.b64encode(imencode_image)
+#            eel.set_base64image2("data:image/jpg;base64," + base64_image2.decode("ascii"))
+
             output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
             if (args.display > 0):
                 if (args.fps > 0):
