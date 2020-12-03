@@ -277,6 +277,8 @@ if __name__ == '__main__':
         cropped_output = cropped_output_q.get()
 
         #hand_gui.start_gui(output_frame)
+
+        #output_qの内容表示するためにhand_gui.start_guiへ
         cnt_gui = hand_gui.start_gui(output_frame, cnt_gui)
 
         inferences      = None

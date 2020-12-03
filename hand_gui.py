@@ -5,8 +5,7 @@ import time
 import datetime
 
 def start_gui(output_frame, cnt_gui):
-#def start_gui(output_q, cropped_output_q):
-    if(cnt_gui == 0):   #初回時のみ、eel.init、eel.start起動
+    if(cnt_gui == 0):   #初回時のみにeel.init、eel.start起動、以降起動しない（cnt_guiが1と固定になるため）
         eel.init('GUI')
         eel.start(
         'index.html',
