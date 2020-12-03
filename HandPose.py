@@ -231,7 +231,7 @@ if __name__ == '__main__':
     upper_blue = np.array([30, 200, 255])
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
-    poseCount = [0,0,0,0,0]
+    poseCount = [0,0,0,0,0,0]
     while True:
         frame = video_capture.read()
         frame = cv2.flip(frame, 1)
