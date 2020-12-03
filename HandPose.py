@@ -43,6 +43,7 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
     except Exception as e:
         print(e)
     while True:
+
         #print("> ===== in worker loop, frame ", frame_processed)
         frame = input_q.get()
         if (frame is not None):
@@ -99,6 +100,7 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
 
 
 if __name__ == '__main__':
+
     #パーサを作る
     parser = argparse.ArgumentParser()
 
@@ -271,8 +273,12 @@ if __name__ == '__main__':
 
         # initialize the folder which contents html,js,css,etc
 
+        hand_gui.start_gui(output_q)
+
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
+
+        #hand_gui.start_gui(output_frame)
 
         inferences      = None
 
@@ -293,7 +299,7 @@ if __name__ == '__main__':
             y = pointY_q.get_nowait()
             gui.drawInferences(inferences,poseCount, poses)
             #ポーズの形の信頼地が0.7を超えたらアクションを実行する
-            for i in range(3):
+            for i in range(len(poses)):
                 if(inferences[i] > 0.7):
                     poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
 
