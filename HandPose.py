@@ -221,7 +221,7 @@ if __name__ == '__main__':
     pool = Pool(args.num_workers, worker,
                 (input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed))
 
-    #pool2 = Pool(1,hand_gui.start_gui,(output_q, cropped_output_q))
+    pool2 = Pool(1,hand_gui.start_gui,(output_q, cropped_output_q))
 
     start_time = datetime.datetime.now()
     num_frames = 0
@@ -234,14 +234,13 @@ if __name__ == '__main__':
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
     poseCount = [0,0,0,0,0]
+    #cnt_gui=0
     while True:
         frame = video_capture.read()
         frame = cv2.flip(frame, 1)
 
         index += 1
-        #明るさの度合いを変更する数値
-        gamma_config = 1.5
-        #画像の明るさ変更
+        gamma_config = 1.1
         frame = gamma.gamma_correction(frame,gamma_config)
 
         #画像切り取るかどうか
@@ -273,12 +272,14 @@ if __name__ == '__main__':
 
         # initialize the folder which contents html,js,css,etc
 
-        hand_gui.start_gui(output_q)
+        #hand_gui.start_gui(output_q)
+
+        #pool2 = Pool(1,hand_gui.start_gui,(output_q, cropped_output_q))
 
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
 
-        #hand_gui.start_gui(output_frame)
+        #cnt_gui = hand_gui.start_gui(output_frame, cnt_gui)
 
         inferences      = None
 
@@ -299,7 +300,7 @@ if __name__ == '__main__':
             y = pointY_q.get_nowait()
             gui.drawInferences(inferences,poseCount, poses)
             #ポーズの形の信頼地が0.7を超えたらアクションを実行する
-            for i in range(len(poses)):
+            for i in range(3):
                 if(inferences[i] > 0.7):
                     poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
 
@@ -310,8 +311,8 @@ if __name__ == '__main__':
                 cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
                 cv2.resizeWindow('Cropped', 450, 300)
                 cv2.imshow('Cropped', cropped_output)
-                #学習データとして保存
-                #cv2.imwrite('Poses/Rock/Rock_3/Rock_1_' + str(num_frames) + '.png', cropped_output)
+
+                #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
             else:
