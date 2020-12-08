@@ -1,19 +1,5 @@
 /*
-不要！！！！！！！！！！！！！！！！！！！！！！
-eel.expose(set_elapsedtime);
-function set_elapsedtime(elapsedtime) {
-      document.getElementById("elapsedtime").innerHTML = "elapsedtime:" + elapsedtime + "s";
-}
-*/
-    /*
-    eel.expose(set_base64image);
-    function set_base64image(base64image) {
-        document.getElementById("python_video").src = base64image;
-    }
-    */
-/*
-eel.expose(set_base64image2);
-function set_base64image2(base64image2) {
-        document.getElementById("python_video2").src = base64image2;
-}
+function pose_gauge()
+  document.getElementById("poseName").innerHTML =
+      "<meter max=" + "100" + "min=" + "0" + "low=" + "20" + "high=" + "80" + "optimum=" + "90" + "value=" + "95" + "></meter>";
 */

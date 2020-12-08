@@ -4,7 +4,7 @@ import cv2 as cv
 import time
 import datetime
 
-def start_gui(output_frame, cnt_gui):
+def start_gui(output_frame, cnt_gui, cnt_pose, name_pose):
     if(cnt_gui == 0):   #初回時のみにeel.init、eel.start起動、以降起動しない（cnt_guiが1と固定になるため）
         eel.init('GUI')
         eel.start(
@@ -31,6 +31,7 @@ def start_gui(output_frame, cnt_gui):
         eel.set_base64image("data:image/jpg;base64," +
                                     base64_image.decode("ascii"))
 
+    eel.set_posegauge(cnt_pose, name_pose)
     return cnt_gui
 
 #    key = cv.waitKey(1)

@@ -235,6 +235,8 @@ if __name__ == '__main__':
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
     poseCount = [0,0,0,0,0]
     cnt_gui=0   #hand_guiにてeelを動かす用に使用
+    cnt_pose=0
+    name_pose=""
 
     while True:
         frame = video_capture.read()
@@ -279,7 +281,7 @@ if __name__ == '__main__':
         #hand_gui.start_gui(output_frame)
 
         #output_qの内容表示するためにhand_gui.start_guiへ
-        cnt_gui = hand_gui.start_gui(output_frame, cnt_gui)
+        cnt_gui = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose)
 
         inferences      = None
 
@@ -303,7 +305,8 @@ if __name__ == '__main__':
             for i in range(len(poses)):
                 if(inferences[i] > 0.7):
                     poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
-
+                    cnt_pose = poseCount[i]
+                    name_pose = poses[i]
         if (cropped_output is not None):
             #切り取った画像をBGR形式からRGB形式へ変更する。
             cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
