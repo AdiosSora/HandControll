@@ -43,6 +43,7 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
     except Exception as e:
         print(e)
     while True:
+
         #print("> ===== in worker loop, frame ", frame_processed)
         frame = input_q.get()
         if (frame is not None):
@@ -99,6 +100,7 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
 
 
 if __name__ == '__main__':
+
     #パーサを作る
     parser = argparse.ArgumentParser()
 
@@ -108,7 +110,7 @@ if __name__ == '__main__':
         '--source',
         dest='video_source',
         type=int,
-        # default=hand_gui.cam_source(),
+        #default=hand_gui.cam_source(),
         default = 0,
         help='Device index of the camera.')
 
@@ -257,7 +259,7 @@ if __name__ == '__main__':
 
             #キャプチャした画像の切り取り
             frame = frame[top_params:bottom_params,left_params:right_params].copy()
-            # frame = frame[50:200,50:200].copy()
+            # frame = frame[0:50,0:50].copy()
 
         #背景切り抜きの為画像形式をBGRからHSVへ変更
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV_FULL)
@@ -277,9 +279,11 @@ if __name__ == '__main__':
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
 
+        #hand_gui.start_gui(output_frame)
 
+        #output_qの内容表示するためにhand_gui.start_guiへ
+        cnt_gui = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose)
 
-        cnt_gui = hand_gui.start_gui(output_frame,cnt_gui,cnt_pose,name_pose)
         inferences      = None
 
         try:
@@ -311,8 +315,8 @@ if __name__ == '__main__':
                 cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
                 cv2.resizeWindow('Cropped', 450, 300)
                 cv2.imshow('Cropped', cropped_output)
-                #学習データとして保存
-                # cv2.imwrite('Poses/Three/Three_4/Three_3' + str(num_frames) + '.png', cropped_output)
+
+                #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
             else:
@@ -333,7 +337,6 @@ if __name__ == '__main__':
 #            eel.set_base64image2("data:image/jpg;base64," + base64_image2.decode("ascii"))
 
             output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
-            # cv2.imwrite('Poses/Save/cccc' + str(num_frames) + '.png', output_frame)
             if (args.display > 0):
                 if (args.fps > 0):
                     detector_utils.draw_fps_on_image("FPS : " + str(int(fps)),
