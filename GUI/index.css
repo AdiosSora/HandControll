@@ -1,0 +1,23 @@
+/*
+#stalker {
+    pointer-events: none;
+    position: fixed;
+    top: -8px;     //座標調節（カーソル位置と円の中心を合わせる）
+    left: -8px;    //座標調節（カーソル位置と円の中心を合わせる）
+    width: 16px;   //マウスストーカーの直径
+    height: 16px;  //マウスストーカーの直径
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    transition: transform 0.2s, top, 0.5s, left 0.5s, width .5s, height .5s, background-color .5s;
+    transition-timing-function: ease-out;
+    z-index: 999;
+    &.hov_{
+      top: -32px;     //大きさに合わせて座標調節
+      left: -32px;    //大きさに合わせて座標調節
+      width: 64px;
+      height: 64px;
+      transition: .5s;
+      background: rgba(255, 0, 0, 0.4);
+    }
+}
+*/

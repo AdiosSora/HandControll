@@ -108,7 +108,7 @@ if __name__ == '__main__':
         '--source',
         dest='video_source',
         type=int,
-        default=0,
+        default=hand_gui.cam_source(),
         help='Device index of the camera.')
 
     #手を識別する数
@@ -231,15 +231,17 @@ if __name__ == '__main__':
     upper_blue = np.array([30, 200, 255])
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
-    poseCount = [0,0,0,0,0,0]
+    poseCount = [0,0,0,0,0]
+    cnt_gui=0   #hand_guiにてeelを動かす用に使用
+    cnt_pose=0  #
+    name_pose=""
+
     while True:
         frame = video_capture.read()
         frame = cv2.flip(frame, 1)
 
         index += 1
-        #明るさの度合いを変更する数値
-        gamma_config = 1.5
-        #画像の明るさ変更
+        gamma_config = 1.1
         frame = gamma.gamma_correction(frame,gamma_config)
 
         #画像切り取るかどうか
@@ -296,7 +298,8 @@ if __name__ == '__main__':
             for i in range(len(poses)):
                 if(inferences[i] > 0.7):
                     poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
-
+                    cnt_pose = poseCount[i] #全ポーズのゲージを取得したい場合は[i]を外す
+                    name_pose = poses[i]
         if (cropped_output is not None):
             #切り取った画像をBGR形式からRGB形式へ変更する。
             cropped_output = cv2.cvtColor(cropped_output, cv2.COLOR_RGB2BGR)
@@ -320,6 +323,11 @@ if __name__ == '__main__':
         # print("frame ",  index, num_frames, elapsed_time, fps)
 
         if (output_frame is not None):
+
+#            _, imencode_image = cv2.imencode('.jpg', output_frame)
+#            base64_image2 = base64.b64encode(imencode_image)
+#            eel.set_base64image2("data:image/jpg;base64," + base64_image2.decode("ascii"))
+
             output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
             # cv2.imwrite('Poses/Save/cccc' + str(num_frames) + '.png', output_frame)
             if (args.display > 0):
