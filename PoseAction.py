@@ -1,8 +1,7 @@
 import autopy
 import tkinter as tk
 
-history_x = 0
-history_y = 0
+
 
 def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズがどれかを判定し、それぞれのイベントを発火する。
     i=0
@@ -12,7 +11,7 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
     if(poseName=="Palm"):#7割り超えポーズがパーであった場合は瞬時にマウス移動を実行し、処理を終了する
         autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
         pointerMove(x,y)
-        poseCount=[0,0,0,0,0]#ドラッグ動作をさせるポーズの名前番地のカウントを０clear。ドラックのカウントclearで必要。
+        poseCount=[0,0,0,0,0,0]#ドラッグ動作をさせるポーズの名前番地のカウントを０clear。ドラックのカウントclearで必要。
         return poseCount
 
     if(poseName=="Rock"):
@@ -32,7 +31,6 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
 
                         if(str(Namelist[i])=="Rock"):#wishの動作
                             poseCount=pose_Drag(poseCount,i)
-                            poseCount[i]=0
             break
     return poseCount
 
@@ -62,13 +60,16 @@ def pose_Drop():
     #l=0
 
 def pointerMove(x,y):
-    global history_x
-    global history_y
+    history_x,history_y = autopy.mouse.location()
     try:
-        if(abs(history_x-x)>20 or abs(history_y-y)>20):
+        abs_x = history_x-x
+        abs_y = history_y-y
+        if(abs(abs_x)>15 or abs(abs_y)>15):
+            autopy.mouse.move(history_x-abs_x//4,history_y-abs_y//4)
+            autopy.mouse.move(history_x-abs_x//2,history_y-abs_y//2)
+            autopy.mouse.move(history_x-(abs_x//4)*3,history_y-(abs_y//4)*3)
             autopy.mouse.move(x,y)
-            history_x = x
-            history_y = y
         #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
+
     except:
         print("outof")
