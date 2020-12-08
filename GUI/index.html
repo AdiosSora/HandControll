@@ -15,8 +15,26 @@
             }
             eel.expose(set_posegauge);
             function set_posegauge(cnt_pose, name_pose){
+              document.getElementById("getPose").innerHTML = name_pose + "取得";
+
+              /*７割越えのポーズのゲージのみを取得したい場合はこれ*/
               var target = document.getElementById("poseGuage");
-              target.innerHTML = cnt_pose + '回，' + name_pose + '取得<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= ' + cnt_pose +'></meter>'
+
+              target.innerHTML = cnt_pose + '回，' + name_pose + '<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= ' + cnt_pose +'></meter>';
+
+              /*全ポーズのゲージを取得したい場合はこれ
+              var target0 = document.getElementById("poseGuage0");
+              var target1 = document.getElementById("poseGuage1");
+              var target2 = document.getElementById("poseGuage2");
+              var target3 = document.getElementById("poseGuage3");
+              var target4 = document.getElementById("poseGuage4");
+
+              target0.innerHTML = cnt_pose[0] + '回，Dang<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= ' + cnt_pose[0] +'></meter>';
+              target1.innerHTML = cnt_pose[1] + '回，Garbage<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= ' + cnt_pose[1] +'></meter>';
+              target2.innerHTML = cnt_pose[2] + '回，Palm<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= ' + cnt_pose[2] +'></meter>';
+              target3.innerHTML = cnt_pose[3] + '回，Peace<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= ' + cnt_pose[3] +'></meter>';
+              target4.innerHTML = cnt_pose[4] + '回，Rock<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= ' + cnt_pose[4] +'></meter>';
+              */
             }
         </script>
 
@@ -26,7 +44,23 @@
         <img id="python_video" width="640" height="480" src="./image/noimage.png">
         <br><br>
 
-        <div id="poseGuage">ポーズ名<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= "95"></meter></div>
+        <div id="getPose">取得したポーズ名</div>
+        <br>
+        <!--７割越えのポーズのゲージのみを取得したい場合はこれ-->
+        <div id="poseGuage">でふぉると<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= "95"></meter></div>
+
+        <!--全ポーズのゲージを取得したい場合はこれ
+        <div id="poseGuage0">だん<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= "95"></meter></div>
+        <br>
+        <div id="poseGuage1">があべっじ<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= "95"></meter></div>
+        <br>
+        <div id="poseGuage2">ぱあむ<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= "95"></meter></div>
+        <br>
+        <div id="poseGuage3">ぴいす<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= "95"></meter></div>
+        <br>
+        <div id="poseGuage4">ろっく<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= "95"></meter></div>
+        <br>
+        -->
 
         <a href="./help.html" target="_blank" rel="noopener noreferrer">ヘルプウィンドウ</a>
     </body>
