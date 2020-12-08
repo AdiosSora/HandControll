@@ -34,6 +34,9 @@ def start_gui(output_frame, cnt_gui, cnt_pose, name_pose):
     eel.set_posegauge(cnt_pose, name_pose)
     return cnt_gui
 
-#    key = cv.waitKey(1)
-#    if key == 27:  # ESC
-#        break
+def cam_source():
+    eel.init('GUI')
+    eel.start('index.html',block=False)
+    num = eel.js_function()()
+    print(num)
+    return int(num)

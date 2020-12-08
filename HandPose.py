@@ -110,7 +110,7 @@ if __name__ == '__main__':
         '--source',
         dest='video_source',
         type=int,
-        default=0,
+        default=hand_gui.cam_source(),
         help='Device index of the camera.')
 
     #手を識別する数
