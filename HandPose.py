@@ -232,7 +232,7 @@ if __name__ == '__main__':
     upper_blue = np.array([30, 200, 255])
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
-    poseCount = [0,0,0,0,0]
+    poseCount = [0,0,0,0,0,0]
     cnt_gui=0   #hand_guiにてeelを動かす用に使用
     cnt_pose=0  #
     name_pose=""
@@ -279,8 +279,7 @@ if __name__ == '__main__':
 
 
 
-        cut_gui = hand_gui.start_gui(output_frame,cnt_gui,cnt_pose,name_pose)
-
+        cnt_gui = hand_gui.start_gui(output_frame,cnt_gui,cnt_pose,name_pose)
         inferences      = None
 
         try:
