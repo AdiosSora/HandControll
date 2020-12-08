@@ -276,6 +276,10 @@ if __name__ == '__main__':
         output_frame = output_q.get()
         cropped_output = cropped_output_q.get()
 
+
+
+        cut_gui = hand_gui.start_gui(output_frame,cnt_gui,cnt_pose,name_pose)
+        
         inferences      = None
 
         try:
