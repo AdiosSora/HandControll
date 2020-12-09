@@ -31,7 +31,7 @@ score_thresh = 0.18
 #グラフをロードするワーカースレッドを作成し、
 #入力キュー内の画像を検出し、出力キューに配置します
 
-
+@eel.expose
 def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed):
     print(">> loading frozen model for worker")
     detection_graph, sess = detector_utils.load_inference_graph()
@@ -116,8 +116,8 @@ if __name__ == '__main__':
         '--source',
         dest='video_source',
         type=int,
-        #default=hand_gui.cam_source(),
-        default = 0,
+        default=0,
+        # default=hand_gui.cam_source(),
         help='Device index of the camera.')
 
     #手を識別する数
@@ -244,6 +244,7 @@ if __name__ == '__main__':
     cnt_gui=0   #hand_guiにてeelを動かす用に使用
     cnt_pose=0  #
     name_pose=""
+    flg_end = 0#システム終了フラグ
 
     while True:
         frame = video_capture.read()
@@ -290,7 +291,7 @@ if __name__ == '__main__':
         #hand_gui.start_gui(output_frame)
 
         #output_qの内容表示するためにhand_gui.start_guiへ
-        cnt_gui = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose)
+        cnt_gui, flg_end = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose)
 
         inferences      = None
 
@@ -363,6 +364,8 @@ if __name__ == '__main__':
             print("video end")
             break
 
+        if(flg_end == 1):
+            break
 
 
     elapsed_time = (datetime.datetime.now() - start_time).total_seconds()

@@ -21,7 +21,7 @@ $(document).ready(function(){
     });
      // エラー発生時
   }).catch(function(err) {
-    // console.error('カメラの接続に失敗しました', err);
+    console.error('カメラの接続に失敗しました', err);
 });
 });
 
@@ -64,6 +64,10 @@ $(function($) {
 
 });
 
+//フレームレスウィンドウを作成する
+const BrowerWindow = require('electron').BrowserWindow
+var win = new BrowerWindow({width:800, height:600, frame:false , transparent:true, frame:false})
+
 // // 確認ボタンを押したときにカメラが使用できるか確認
 // $(function($){
 //   $('#check').click(function(){
@@ -76,33 +80,7 @@ $(function($) {
 //   });
 // });
 
-eel.expose(js_function);
-function js_function(){
-  return $('#selector option:selected').text().slice(0,1);
-}
-//
-// try{
-//   $(function($){
-//     $('#check').click(function(){
-//       test();
-//     });
-//   });
-// }catch(err){
-//   cons(err);
-// }
-//
-// async function test(){
-//       navigator.mediaDevices.enumerateDevices()
-//       .then(function(devices) {
-//         devices.forEach(function(device) {
-//           if(device.kind == "videoinput"){
-//             var server = device.deviceId;
-//           }
-//         });
-//          // エラー発生時
-//       }).catch(function(err) {
-//         // console.error('カメラの接続に失敗しました', err);
-//     });
-//       let TEST = await eel.test_eel(server);
-//       console.log(TEST);
+// eel.expose(js_function);
+// function js_function(){
+//   return $('#selector option:selected').text().slice(0,1);
 // }
