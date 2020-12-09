@@ -282,7 +282,7 @@ if __name__ == '__main__':
         #hand_gui.start_gui(output_frame)
 
         #output_qの内容表示するためにhand_gui.start_guiへ
-        cnt_gui = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose)
+        cnt_gui = hgui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose)
 
         inferences      = None
 
