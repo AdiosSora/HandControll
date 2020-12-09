@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <script type="text/javascript" src="/eel.js"></script>
         <script src ="Recognize.js"></script>
+        <link rel="stylesheet" href="Recognize.css">
     </head>
     <body>
         <div id="elapsedtime">elapsedtime</div>
@@ -29,5 +30,16 @@
         -->
         <a href="Check.html"><button>戻る</button></a>
         <a href="Help.html" target="_blank" rel="noopener noreferrer">ヘルプウィンドウ</a>
+        <div id="display_box" class="display_box">
+	         <label onclick="clickBtn1()">FOCUSを終了</label>
+	          <div id="hidden_box" class="hidden_box">
+		            <p>FOCUSを終了しますか</p>
+                <button type="button" name="nobtn" value="NO" onclick="clickBtn1()">NO</button>
+                <button type="button" name="okbtn" value="OK" onclick="sysclose()">OK</button>
+	          </div>
+        </div>
+        <script>
+          document.getElementById("hidden_box").style.display ="none";
+        </script>
     </body>
 </html>

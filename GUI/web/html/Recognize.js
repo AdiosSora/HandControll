@@ -1,3 +1,17 @@
+      function clickBtn1(){
+      const hidden_box = document.getElementById("hidden_box");
+
+      if(hidden_box.style.display=="block"){
+        hidden_box.style.display ="none";
+      }else{
+       hidden_box.style.display ="block";
+      }
+    }
+
+    function sysclose(){
+      eel.py_sysclose();
+      window.close();
+    }
     eel.expose(set_elapsedtime);
     function set_elapsedtime(elapsedtime) {
         document.getElementById("elapsedtime").innerHTML = "elapsedtime:" + elapsedtime + "s";
