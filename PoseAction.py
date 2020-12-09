@@ -28,9 +28,13 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
                             print("グー")
                         if(str(Namelist[i])=="Peace"):#チョキの動作
                             poseCount[i]=0
-
+                            pose_Click_left()
                         if(str(Namelist[i])=="Rock"):#wishの動作
                             poseCount=pose_Drag(poseCount,i)
+                        if(str(Namelist[i])=="Three"):
+                            poseCount[i]=0
+                            pose_doubleClick_left()
+
             break
     return poseCount
 
@@ -38,12 +42,16 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
 
 def pose_Click_left():
     print("Click_left!!!!")
-    #autopy.mouse.click(autopy.mouse.Button.LEFT)
+    autopy.mouse.click(autopy.mouse.Button.LEFT)
 
 def pose_doubleClick_left():
     print("Click_left!!!!")
-    #autopy.mouse.click(autopy.mouse.Button.LEFT)
-    #autopy.mouse.click(autopy.mouse.Button.LEFT)
+    autopy.mouse.click(autopy.mouse.Button.LEFT)
+    autopy.mouse.click(autopy.mouse.Button.LEFT)
+
+def pose_Click_right():
+    print("Click_right!!!!")
+    autopy.mouse.click(autopy.mouse.Button.RIGHT)
 
 def pose_Drag(poseCount,i):
     print("ドラッグ")
