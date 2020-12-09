@@ -238,6 +238,7 @@ if __name__ == '__main__':
     cnt_gui=0   #hand_guiにてeelを動かす用に使用
     cnt_pose=0  #
     name_pose=""
+    flg_end = 0#システム終了フラグ
 
     while True:
         frame = video_capture.read()
@@ -282,7 +283,7 @@ if __name__ == '__main__':
         #hand_gui.start_gui(output_frame)
 
         #output_qの内容表示するためにhand_gui.start_guiへ
-        cnt_gui = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose)
+        cnt_gui, flg_end = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose)
 
         inferences      = None
 
@@ -355,6 +356,8 @@ if __name__ == '__main__':
             print("video end")
             break
 
+        if(flg_end == 1):
+            break
 
 
     elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
