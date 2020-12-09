@@ -4,6 +4,13 @@ import cv2 as cv
 import time
 import datetime
 
+flg_sys = 0#終了ボタンを押されたかのフラグ
+
+@eel.expose
+def py_sysclose():
+    global flg_sys
+    flg_sys = 1
+
 def start_gui(output_frame, cnt_gui, cnt_pose, name_pose):
     if(cnt_gui == 0):   #初回時のみにeel.init、eel.start起動、以降起動しない（cnt_guiが1と固定になるため）
         eel.init('GUI/web/html')
@@ -32,7 +39,7 @@ def start_gui(output_frame, cnt_gui, cnt_pose, name_pose):
                                     base64_image.decode("ascii"))
 
     eel.set_posegauge(cnt_pose, name_pose)
-    return cnt_gui
+    return cnt_gui, flg_sys
 
 def cam_source():
     eel.init('GUI/web/html')
