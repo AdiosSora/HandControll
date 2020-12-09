@@ -71,11 +71,17 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
                 # wx = (width + (int(right)-int(left))*(width / cap_params['im_width'])) / cap_params['im_width']
                 #
                 # hx = (height + (int(bottom)-int(top))*(height / cap_params['im_height'])) / cap_params['im_height']
-                wx = (width + (int(right)-int(left))*(width / cropped_width)) / (cropped_width-20)
+                # wx = (width + (int(right)-int(left))*(width / cropped_width)) / (cropped_width-20)
+                #
+                # hx = (height + (int(bottom)-int(top))*(height / cropped_height)) / (cropped_height-20)
+                # p1 = int(left)*wx
+                # p2 = int(bottom)*hx-(int(bottom)*hx-int(top)*hx)
 
-                hx = (height + (int(bottom)-int(top))*(height / cropped_height)) / (cropped_height-20)
+                hx = (height / cropped_height)*1.2
+                wx = (width / cropped_width)*1.2
+
                 p1 = int(left)*wx
-                p2 = int(bottom)*hx-(int(bottom)*hx-int(top)*hx)
+                p2 = int(top)*wx
 
                 #判定した手の範囲を表示
                 fp = (int(left),int(top))
@@ -234,7 +240,7 @@ if __name__ == '__main__':
     upper_blue = np.array([30, 200, 255])
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
-    poseCount = [0,0,0,0,0]
+    poseCount = [0,0,0,0,0,0]
     cnt_gui=0   #hand_guiにてeelを動かす用に使用
     cnt_pose=0  #
     name_pose=""
@@ -244,22 +250,24 @@ if __name__ == '__main__':
         frame = cv2.flip(frame, 1)
 
         index += 1
-        gamma_config = 1.1
+        gamma_config = 1.6
         frame = gamma.gamma_correction(frame,gamma_config)
-
+        # cv2.imwrite('Poses/Save/aaa' + str(num_frames) + '.png', frame)
         #画像切り取るかどうか
-        frame_cropped_flag = False
+        frame_cropped_flag = True
         #画面サイズを縮小させ稼働領域の調整を行う
         #各パラメーターに値を入力することで画像サイズを小さくできる
         if(frame_cropped_flag == True):
-            left_params = int(cap_params['im_width'])//20
-            top_params = int(cap_params['im_height'])//20
-            right_params = int(cap_params['im_width'])-(int(cap_params['im_width'])//20)
-            bottom_params = int(cap_params['im_height'])-(int(cap_params['im_height'])//20)
+            # print(int(cap_params['im_width']))
+            # print(int(cap_params['im_height']))
+            left_params = int(cap_params['im_width'])//8
+            top_params = int(cap_params['im_height'])//8
+            right_params = int(cap_params['im_width'])-(int(cap_params['im_width'])//8)
+            bottom_params = int(cap_params['im_height'])-(int(cap_params['im_height'])//8)
 
             #キャプチャした画像の切り取り
-            frame = frame[top_params:bottom_params,left_params:right_params].copy()
-            # frame = frame[0:50,0:50].copy()
+            # frame = frame[top_params:bottom_params,left_params:right_params].copy()
+            frame = frame[100:200,100:200].copy()
 
         #背景切り抜きの為画像形式をBGRからHSVへ変更
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV_FULL)
