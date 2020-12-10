@@ -1,0 +1,22 @@
+header{
+  padding:20px;
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: #afafaf;
+}
+.side-menu{
+  background-color: #eeeeee;
+  height:100vh;
+  font-size: 150%;
+}
+.main-content{
+  height:100vh;
+}
+
+/* get the styles for both icon*/
+@import "https://cssicon.space/css/icons.css";
+
+.icon, .icon:before, .icon:after, .icon i, .icon i:before, .icon i:after {
+  transition: all 0.4s ease;
+}
+/* this is merely a rough demo to showcase the potential of CSS ICON on animation, more crafted animation can go from here */

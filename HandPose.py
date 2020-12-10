@@ -234,7 +234,7 @@ if __name__ == '__main__':
     upper_blue = np.array([30, 200, 255])
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
-    poseCount = [0,0,0,0,0,0]
+    poseCount = [0,0,0,0,0,0,0]
     cnt_gui=0   #hand_guiにてeelを動かす用に使用
     cnt_pose=0  #
     name_pose=""
@@ -281,7 +281,7 @@ if __name__ == '__main__':
         cropped_output = cropped_output_q.get()
 
         #hand_gui.start_gui(output_frame)
-
+        output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
         #output_qの内容表示するためにhand_gui.start_guiへ
         cnt_gui, flg_end = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose)
 
@@ -317,7 +317,7 @@ if __name__ == '__main__':
                 cv2.resizeWindow('Cropped', 450, 300)
                 cv2.imshow('Cropped', cropped_output)
 
-                #cv2.imwrite('image_' + str(num_frames) + '.png', cropped_output)
+                # cv2.imwrite('Poses/Seri/Seri_3/Seri_3' + str(num_frames) + '.png', cropped_output)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
             else:
@@ -337,7 +337,7 @@ if __name__ == '__main__':
 #            base64_image2 = base64.b64encode(imencode_image)
 #            eel.set_base64image2("data:image/jpg;base64," + base64_image2.decode("ascii"))
 
-            output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
+            # output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
             if (args.display > 0):
                 if (args.fps > 0):
                     detector_utils.draw_fps_on_image("FPS : " + str(int(fps)),

@@ -3,8 +3,8 @@ import numpy as np
 from random import randint
 import autopy
 import PoseAction
-def drawInferences(values, poseCount, names=['', '', '','','','']):
-    nb_classes              = 6
+def drawInferences(values, poseCount, names=['', '', '','','','','']):
+    nb_classes              = 7
     left_margin             = 150
     margin                  = 50
     thickness               = 40
