@@ -25,7 +25,9 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
                 poseCount[i]+=1
                 if(poseCount[i]>=15):#条件の右の数だけポーズ識別で各動作を開始
                         if(str(Namelist[i])=="Dang"):#グーの動作
+                            poseCount[i]=0
                             print("グー")
+                            pose_Click_right()
                         if(str(Namelist[i])=="Peace"):#チョキの動作
                             poseCount[i]=0
                             pose_Click_left()

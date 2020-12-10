@@ -77,17 +77,31 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
                 # p1 = int(left)*wx
                 # p2 = int(bottom)*hx-(int(bottom)*hx-int(top)*hx)
 
-                hx = (height / cropped_height)*1.2
-                wx = (width / cropped_width)*1.2
+                hx = (height / cropped_height)*1.3
+                wx = (width / cropped_width)*1.3
+
+
+                hi = 100 - (int(bottom)-int(top))
+                wi = 70 - (int(right)-int(left))
+
+                top = top - hi
+
+                right = right + wi
+
+                fp = (int(left),int(top))
+                ep = (int(right),int(bottom))
 
                 p1 = int(left)*wx
                 p2 = int(top)*wx
 
                 #判定した手の範囲を表示
-                fp = (int(left),int(top))
-                ep = (int(right),int(bottom))
+
+
+
+
                 cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
 
+                print(int(right)-int(left))
                 #取得した座標(p1,p2)を挿入
                 pointX_q.put(p1)
                 pointY_q.put(p2)
