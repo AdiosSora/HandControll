@@ -11,7 +11,7 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
     if(poseName=="Palm"):#7割り超えポーズがパーであった場合は瞬時にマウス移動を実行し、処理を終了する
         autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
         pointerMove(x,y)
-        poseCount=[0,0,0,0,0,0]#ドラッグ動作をさせるポーズの名前番地のカウントを０clear。ドラックのカウントclearで必要。
+        poseCount=[0,0,0,0,0,0,0]#ドラッグ動作をさせるポーズの名前番地のカウントを０clear。ドラックのカウントclearで必要。
         return poseCount
 
     if(poseName=="Rock"):
