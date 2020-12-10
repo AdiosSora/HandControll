@@ -73,6 +73,27 @@ a.btn--circle {
   height: 100px;
   padding: 0;
 }
+
+table{
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+table tr{
+  border-bottom: solid 1px #eee;
+  cursor: pointer;
+}
+
+table tr:hover{
+  background-color: #d4f0fd;
+}
+
+table th,table td{
+  text-align: center;
+  width: 25%;
+  padding: 25px 0;
+}
 /* get the styles for both icon*/
 @import "https://cssicon.space/css/icons.css";
 
