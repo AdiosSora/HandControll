@@ -31,7 +31,7 @@ score_thresh = 0.18
 #グラフをロードするワーカースレッドを作成し、
 #入力キュー内の画像を検出し、出力キューに配置します
 
-
+@eel.expose
 def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed):
     print(">> loading frozen model for worker")
     detection_graph, sess = detector_utils.load_inference_graph()
@@ -71,11 +71,17 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
                 # wx = (width + (int(right)-int(left))*(width / cap_params['im_width'])) / cap_params['im_width']
                 #
                 # hx = (height + (int(bottom)-int(top))*(height / cap_params['im_height'])) / cap_params['im_height']
-                wx = (width + (int(right)-int(left))*(width / cropped_width)) / (cropped_width-20)
+                # wx = (width + (int(right)-int(left))*(width / cropped_width)) / (cropped_width-20)
+                #
+                # hx = (height + (int(bottom)-int(top))*(height / cropped_height)) / (cropped_height-20)
+                # p1 = int(left)*wx
+                # p2 = int(bottom)*hx-(int(bottom)*hx-int(top)*hx)
 
-                hx = (height + (int(bottom)-int(top))*(height / cropped_height)) / (cropped_height-20)
+                hx = (height / cropped_height)*1.2
+                wx = (width / cropped_width)*1.2
+
                 p1 = int(left)*wx
-                p2 = int(bottom)*hx-(int(bottom)*hx-int(top)*hx)
+                p2 = int(top)*wx
 
                 #判定した手の範囲を表示
                 fp = (int(left),int(top))
@@ -110,8 +116,8 @@ if __name__ == '__main__':
         '--source',
         dest='video_source',
         type=int,
-        #default=hand_gui.cam_source(),
-        default = 0,
+        default=0,
+        # default=hand_gui.cam_source(),
         help='Device index of the camera.')
 
     #手を識別する数
@@ -245,22 +251,24 @@ if __name__ == '__main__':
         frame = cv2.flip(frame, 1)
 
         index += 1
-        gamma_config = 1.1
+        gamma_config = 1.6
         frame = gamma.gamma_correction(frame,gamma_config)
-
+        # cv2.imwrite('Poses/Save/aaa' + str(num_frames) + '.png', frame)
         #画像切り取るかどうか
         frame_cropped_flag = False
         #画面サイズを縮小させ稼働領域の調整を行う
         #各パラメーターに値を入力することで画像サイズを小さくできる
         if(frame_cropped_flag == True):
-            left_params = int(cap_params['im_width'])//20
-            top_params = int(cap_params['im_height'])//20
-            right_params = int(cap_params['im_width'])-(int(cap_params['im_width'])//20)
-            bottom_params = int(cap_params['im_height'])-(int(cap_params['im_height'])//20)
+            # print(int(cap_params['im_width']))
+            # print(int(cap_params['im_height']))
+            left_params = int(cap_params['im_width'])//8
+            top_params = int(cap_params['im_height'])//8
+            right_params = int(cap_params['im_width'])-(int(cap_params['im_width'])//8)
+            bottom_params = int(cap_params['im_height'])-(int(cap_params['im_height'])//8)
 
             #キャプチャした画像の切り取り
-            frame = frame[top_params:bottom_params,left_params:right_params].copy()
-            # frame = frame[0:50,0:50].copy()
+            # frame = frame[top_params:bottom_params,left_params:right_params].copy()
+            frame = frame[100:200,100:200].copy()
 
         #背景切り抜きの為画像形式をBGRからHSVへ変更
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV_FULL)
@@ -358,6 +366,7 @@ if __name__ == '__main__':
 
         if(flg_end == 1):
             break
+
 
     elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
     fps = num_frames / elapsed_time
