@@ -1,4 +1,4 @@
-      function clickBtn1(){
+    function clickBtn1(){
       const hidden_box = document.getElementById("hidden_box");
 
       if(hidden_box.style.display=="block"){
