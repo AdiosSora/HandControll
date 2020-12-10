@@ -12,14 +12,21 @@
       eel.py_sysclose();
       window.close();
     }
+    /*
+    function window.onbeforeunload(){
+      eel.py_sysclose();
+    }
+    */
     eel.expose(set_elapsedtime);
     function set_elapsedtime(elapsedtime) {
         document.getElementById("elapsedtime").innerHTML = "elapsedtime:" + elapsedtime + "s";
     }
+
     eel.expose(set_base64image);
     function set_base64image(base64image) {
         document.getElementById("python_video").src = base64image;
     }
+
     eel.expose(set_posegauge);
     function set_posegauge(cnt_pose, name_pose){
       document.getElementById("getPose").innerHTML = name_pose + "取得";
