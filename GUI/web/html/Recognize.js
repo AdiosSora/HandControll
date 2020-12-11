@@ -12,11 +12,11 @@
       eel.py_sysclose();
       window.close();
     }
-    /*
-    function window.onbeforeunload(){
-      eel.py_sysclose();
+    eel.expose(windowclose)
+    function windowclose(){
+      window.close();
     }
-    */
+
     eel.expose(set_elapsedtime);
     function set_elapsedtime(elapsedtime) {
         document.getElementById("elapsedtime").innerHTML = "elapsedtime:" + elapsedtime + "s";
