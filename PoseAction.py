@@ -36,6 +36,9 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
                         if(str(Namelist[i])=="Three"):
                             poseCount[i]=0
                             pose_doubleClick_left()
+                        if(str(Namelist[i])=="Seri"):
+                            poseCount[i]=0
+                            pose_Click_right()
 
             break
     return poseCount
