@@ -80,9 +80,11 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
                 hx = (height / cropped_height)*1.3
                 wx = (width / cropped_width)*1.3
 
-
+                #手を識別したボックスの固定化処理
                 hi = 100 - (int(bottom)-int(top))
                 wi = 70 - (int(right)-int(left))
+
+
 
                 top = top - hi
 
@@ -93,15 +95,13 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
 
                 p1 = int(left)*wx
                 p2 = int(top)*wx
-
+                if(abs(hi)>25 or abs(wi)>25):
+                    cv2.rectangle(frame, fp, ep, (255, 0, 0), 1, 1)
                 #判定した手の範囲を表示
+                else:
+                    cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
 
-
-
-
-                cv2.rectangle(frame, fp, ep, (77, 255, 9), 1, 1)
-
-                print(int(right)-int(left))
+                # print(int(right)-int(left))
                 #取得した座標(p1,p2)を挿入
                 pointX_q.put(p1)
                 pointY_q.put(p2)
@@ -254,7 +254,7 @@ if __name__ == '__main__':
     upper_blue = np.array([30, 200, 255])
 
     cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
-    poseCount = [0,0,0,0,0,0,0]
+    poseCount = [0,0,0,0,0,0]
     cnt_gui=0   #hand_guiにてeelを動かす用に使用
     cnt_pose=0  #
     name_pose=""
@@ -339,7 +339,7 @@ if __name__ == '__main__':
                 cv2.resizeWindow('Cropped', 450, 300)
                 cv2.imshow('Cropped', cropped_output)
 
-                # cv2.imwrite('Poses/Seri/Seri_3/Seri_3' + str(num_frames) + '.png', cropped_output)
+                # cv2.imwrite('Poses/Save/Save_1/Save_1' + str(num_frames) + '.png', cropped_output)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
             else:

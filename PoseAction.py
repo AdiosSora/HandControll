@@ -11,10 +11,10 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
     if(poseName=="Palm"):#7割り超えポーズがパーであった場合は瞬時にマウス移動を実行し、処理を終了する
         autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
         pointerMove(x,y)
-        poseCount=[0,0,0,0,0,0,0]#ドラッグ動作をさせるポーズの名前番地のカウントを０clear。ドラックのカウントclearで必要。
+        poseCount=[0,0,0,0,0,0]#ドラッグ動作をさせるポーズの名前番地のカウントを０clear。ドラックのカウントclearで必要。
         return poseCount
 
-    if(poseName=="Rock"):
+    if(poseName=="Dang"):
         pointerMove(x,y)
 
     for tmp in Namelist:#
@@ -25,14 +25,14 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
                 poseCount[i]+=1
                 if(poseCount[i]>=15):#条件の右の数だけポーズ識別で各動作を開始
                         if(str(Namelist[i])=="Dang"):#グーの動作
-                            poseCount[i]=0
                             print("グー")
-                            pose_Click_right()
-                        if(str(Namelist[i])=="Peace"):#チョキの動作
+                            poseCount=pose_Drag(poseCount,i)
+                        if(str(Namelist[i])=="Seri"):#チョキの動作
                             poseCount[i]=0
                             pose_Click_left()
                         if(str(Namelist[i])=="Rock"):#wishの動作
-                            poseCount=pose_Drag(poseCount,i)
+                            poseCount[i]=0
+                            pose_Click_right()
                         if(str(Namelist[i])=="Three"):
                             poseCount[i]=0
                             pose_doubleClick_left()
@@ -78,7 +78,7 @@ def pointerMove(x,y):
             autopy.mouse.move(history_x-abs_x//4,history_y-abs_y//4)
             autopy.mouse.move(history_x-abs_x//2,history_y-abs_y//2)
             autopy.mouse.move(history_x-(abs_x//4)*3,history_y-(abs_y//4)*3)
-            autopy.mouse.move(x,y)
+            # autopy.mouse.move(x,y)
         #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
 
     except:
