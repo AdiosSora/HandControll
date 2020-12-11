@@ -129,8 +129,8 @@ if __name__ == '__main__':
                     print("webcamあったよ！！")
                     continue    #最初の while に戻る
                 else:
-                    #カメラが接続されていない場合
-                    #print("webcamないよ！！！")
+                #カメラが接続されていない場合
+                #print("webcamないよ！！！")
                     continue    #最初の while に戻る
             #正常終了のフラグの場合
             elif(flg_break == 1):
@@ -282,7 +282,7 @@ if __name__ == '__main__':
                 gamma_config = 1.6
 
                 if(frame is None):
-                    #frame が None だと後述の frame = gamma.gamma_correction(frame,gamma_config) で
+                    #frame が None だと frame = gamma.gamma_correction(frame,gamma_config) で
                     #cv2.error が発生するのでここで判定し、今の while を抜ける
                     traceback.print_exc()
                     #それぞれのフラグを立てて、システムを終了させ、最初の while に戻る
