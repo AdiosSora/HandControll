@@ -34,7 +34,7 @@ score_thresh = 0.18
 #グラフをロードするワーカースレッドを作成し、
 #入力キュー内の画像を検出し、出力キューに配置します
 
-@eel.expose
+
 def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q, cap_params, frame_processed):
     print(">> loading frozen model for worker")
     detection_graph, sess = detector_utils.load_inference_graph()
