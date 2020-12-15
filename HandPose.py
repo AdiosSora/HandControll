@@ -112,6 +112,7 @@ if __name__ == '__main__':
     flg_video = 0   #「1」でカメラが接続されていない
     flg_break = 0   #「1」で最初のループを抜け終了する⇒正常終了
     flg_restart = 0 #「1」でリスタートした際に hand_gui.py で eel が2度起動するのを防ぐ
+    flg_start = 0   #「1」で開始時点でのカメラ消失
     cnt_gui=0   #hand_guiにてeelを動かす用に使用（0:初回起動時、1:2回目以降起動時、2:カメラが切断された際にhtmlを閉じるために使用）
 
     while(True):    #カメラが再度接続するまでループ処理
@@ -288,7 +289,13 @@ if __name__ == '__main__':
                     #それぞれのフラグを立てて、システムを終了させ、最初の while に戻る
                     flg_video = 1
                     cnt_gui = 2
-                    cnt_gui, flg_end, flg_restart = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart)
+                    try:
+                        #webcam が最初から接続されていない場合は except の動作
+                        cnt_gui, flg_end, flg_restart, flg_start = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart, flg_start)
+                    except NameError as name_e:
+                        traceback.print_exc()
+                        flg_start = 1
+                        print("webcam接続して！！！！")
                     pool.terminate()
                     video_capture.stop()
                     cv2.destroyAllWindows()
@@ -333,7 +340,7 @@ if __name__ == '__main__':
                 #hand_gui.start_gui(output_frame)
                 output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
                 #output_qの内容表示するためにhand_gui.start_guiへ
-                cnt_gui, flg_end, flg_restart = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart)
+                cnt_gui, flg_end, flg_restart, flg_start = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart, flg_start)
 
                 inferences      = None
 
