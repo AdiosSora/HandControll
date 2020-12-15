@@ -1,6 +1,6 @@
 import autopy
 import tkinter as tk
-
+import time
 
 
 def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズがどれかを判定し、それぞれのイベントを発火する。
@@ -76,12 +76,14 @@ def pointerMove(x,y):
     try:
         abs_x = history_x-x
         abs_y = history_y-y
-        if(abs(abs_x)>15 or abs(abs_y)>15):
-            autopy.mouse.move(history_x-abs_x//4,history_y-abs_y//4)
-            autopy.mouse.move(history_x-abs_x//2,history_y-abs_y//2)
-            autopy.mouse.move(history_x-(abs_x//4)*3,history_y-(abs_y//4)*3)
+        if(abs(abs_x)>20 or abs(abs_y)>20):
+            i = 1
+            for i in range(10):
+                autopy.mouse.move(history_x-(abs_x//10)*i,history_y-(abs_y//10)*i)
+                time.sleep(0.0001)
+                # autopy.mouse.move(x,y)
             # autopy.mouse.move(x,y)
         #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
 
-    except:
-        print("outof")
+    except Exception as e:
+        print(e)
