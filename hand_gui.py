@@ -77,8 +77,8 @@ def start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart, flg_start
         return cnt_gui, flg_sys, flg_restart, flg_start
 
 def cam_source():
-    eel.init('GUI/web/html')
-    eel.start('Check.html',block=False)
+    eel.init('GUI/web')
+    eel.start('html/Check.html',block=False)
     num = eel.js_function()()
     print(num)
     return int(num)
