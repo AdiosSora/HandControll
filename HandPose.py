@@ -131,6 +131,17 @@ if __name__ == '__main__':
         #try:
             #カメラが接続されていないフラグの場合
             if(flg_video == 1):
+                #if(cnt_gui == 2):
+                    #el.init('GUI/web')
+                    #eel.start(
+                    #'html/connect.html',
+                    #     mode='chrome',
+                    #    cmdline_args=['--start-fullscreen'],
+                    #    block=False)
+                    #cnt_gui = 0
+                    #print("connect 接続しているよ！！")
+                    #time.sleep(5)
+                #eel.sleep(0.01)
                 #カメラが接続されているか確認
                 cap2 = cv2.VideoCapture(0)
                 ret2, frame2 = cap2.read()
@@ -140,6 +151,7 @@ if __name__ == '__main__':
                     cnt_gui = 0
                     flg_restart = 1
                     print("webcamあったよ！！")
+                    #eel.windowclose()
                     continue    #最初の while に戻る
                 else:
                 #カメラが接続されていない場合
@@ -311,6 +323,17 @@ if __name__ == '__main__':
                     pool.terminate()
                     video_capture.stop()
                     cv2.destroyAllWindows()
+
+                    #eel.init('GUI/web')
+                    #eel.start(
+                    #'html/connect.html',
+                    #     mode='chrome',
+                    #    cmdline_args=['--start-fullscreen'],
+                    #    block=False)
+                    #i=0
+                    #while(i < 500):
+                    #    eel.sleep(0.01)
+                    #    i+=1
                     break
 
                 frame = gamma.gamma_correction(frame,gamma_config)

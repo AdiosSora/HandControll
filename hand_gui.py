@@ -14,10 +14,10 @@ def py_sysclose():
 
 def start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart, flg_start):
     if(cnt_gui == 0):   #初回時のみにeel.init、eel.start起動、以降起動しない（cnt_guiが1と固定になるため）
-        eel.init('GUI/web/html')
+        eel.init('GUI/web')
         eel.start(
-        'Recognize.html',
-    #        mode='chrome',
+        'html/Recognize.html',
+             mode='chrome',
     #        cmdline_args=['--start-fullscreen'],
         block=False)
         print("htmlスタート！！！")
@@ -67,9 +67,9 @@ def start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart, flg_start
                 block=False)
                 print("再起動！！！！")
         else:
-            eel.init('GUI/web/html')
+            eel.init('GUI/web')
             eel.start(
-            'Recognize.html',
+            'html/Recognize.html',
     #        mode='chrome',
     #        cmdline_args=['--start-fullscreen'],
             block=False)
