@@ -14,9 +14,9 @@ def py_sysclose():
 def start_gui(output_frame, cnt_gui, cnt_pose, name_pose):
     try:#Recognize.htmlが × をクリックして終了した場合をキャッチ
         if(cnt_gui == 0):   #初回時のみにeel.init、eel.start起動、以降起動しない（cnt_guiが1と固定になるため）
-            eel.init('GUI/web/html')
+            eel.init('GUI/web')
             eel.start(
-            'Recognize.html',
+            'html/Recognize.html',
     #        mode='chrome',
     #        cmdline_args=['--start-fullscreen'],
             block=False)
@@ -48,7 +48,7 @@ def start_gui(output_frame, cnt_gui, cnt_pose, name_pose):
 
     except:#Recognize.htmlが × をクリックして終了した場合の例外処理
         #print("強制終了！！！！")
-        eel.init('GUI/web/html')
+        eel.init('GUI/web')
         eel.start(
         'html/Recognize.html',
 #        mode='chrome',
@@ -58,8 +58,8 @@ def start_gui(output_frame, cnt_gui, cnt_pose, name_pose):
         return cnt_gui, flg_sys
 
 def cam_source():
-    eel.init('GUI/web/html')
-    eel.start('Check.html',block=False)
+    eel.init('GUI/web')
+    eel.start('html/Check.html',block=False)
     num = eel.js_function()()
     print(num)
     return int(num)
