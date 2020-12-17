@@ -59,9 +59,9 @@ def start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart, flg_start
                 #開始時点でカメラが消失していた場合は、
                 #こちらで eel を再起動し、× をクリックした際の動作を実行
                 flg_start = 0
-                eel.init('GUI/web/html')
+                eel.init('GUI/web')
                 eel.start(
-                'Recognize.html',
+                'html/Recognize.html',
         #        mode='chrome',
         #        cmdline_args=['--start-fullscreen'],
                 block=False)
