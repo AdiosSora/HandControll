@@ -17,10 +17,10 @@
       window.close();
     }
 
-    eel.expose(set_elapsedtime);
-    function set_elapsedtime(elapsedtime) {
-        document.getElementById("elapsedtime").innerHTML = "elapsedtime:" + elapsedtime + "s";
-    }
+    //eel.expose(set_elapsedtime);
+    //function set_elapsedtime(elapsedtime) {
+      //  document.getElementById("elapsedtime").innerHTML = "elapsedtime:" + elapsedtime + "s";
+  //  }
 
     eel.expose(set_base64image);
     function set_base64image(base64image) {

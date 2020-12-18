@@ -91,7 +91,7 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
 
                 top = top - hi
 
-                right = right + wi
+                left = left - wi
 
                 fp = (int(left),int(top))
                 ep = (int(right),int(bottom))
@@ -131,6 +131,17 @@ if __name__ == '__main__':
         #try:
             #カメラが接続されていないフラグの場合
             if(flg_video == 1):
+                #if(cnt_gui == 2):
+                    #el.init('GUI/web')
+                    #eel.start(
+                    #'html/connect.html',
+                    #     mode='chrome',
+                    #    cmdline_args=['--start-fullscreen'],
+                    #    block=False)
+                    #cnt_gui = 0
+                    #print("connect 接続しているよ！！")
+                    #time.sleep(5)
+                #eel.sleep(0.01)
                 #カメラが接続されているか確認
                 cap2 = cv2.VideoCapture(0)
                 ret2, frame2 = cap2.read()
@@ -141,6 +152,7 @@ if __name__ == '__main__':
                     flg_restart = 1
                     #flg_start, flg_video = hand_gui.connect_cam(flg_start, flg_video)
                     print("webcamあったよ！！")
+                    #eel.windowclose()
                     continue    #最初の while に戻る
                 else:
                 #カメラが接続されていない場合
@@ -283,6 +295,7 @@ if __name__ == '__main__':
 
             cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
             poseCount = [0,0,0,0,0,0,0]
+
             #cnt_gui=0   #hand_guiにてeelを動かす用に使用
             cnt_pose=0  #
             name_pose=""
@@ -313,6 +326,17 @@ if __name__ == '__main__':
                     pool.terminate()
                     video_capture.stop()
                     cv2.destroyAllWindows()
+
+                    #eel.init('GUI/web')
+                    #eel.start(
+                    #'html/connect.html',
+                    #     mode='chrome',
+                    #    cmdline_args=['--start-fullscreen'],
+                    #    block=False)
+                    #i=0
+                    #while(i < 500):
+                    #    eel.sleep(0.01)
+                    #    i+=1
                     break
 
                 frame = gamma.gamma_correction(frame,gamma_config)
@@ -376,6 +400,8 @@ if __name__ == '__main__':
                     gui.drawInferences(inferences,poseCount, poses)
                     #ポーズの形の信頼地が0.7を超えたらアクションを実行する
                     for i in range(len(poses)):
+                        if(inferences[2] > 0.9):
+                            PoseAction.pointerMove2(x,y)
                         if(inferences[i] > 0.7):
                             poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
                             cnt_pose = poseCount[i] #全ポーズのゲージを取得したい場合は[i]を外す
@@ -388,7 +414,7 @@ if __name__ == '__main__':
                         cv2.resizeWindow('Cropped', 450, 300)
                         cv2.imshow('Cropped', cropped_output)
 
-                        # cv2.imwrite('Poses/Seri/Seri_3/Seri_3' + str(num_frames) + '.png', cropped_output)
+                        # cv2.imwrite('Poses/Three/Three_4/Three_4' + str(num_frames) + '.png', cropped_output)
                         if cv2.waitKey(1) & 0xFF == ord('q'):
                             flg_break = 1
                             break

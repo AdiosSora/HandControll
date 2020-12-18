@@ -8,14 +8,14 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
     print(poseCount)
 
 
-    if(poseName=="Palm"):#7割り超えポーズがパーであった場合は瞬時にマウス移動を実行し、処理を終了する
+    #7割り超えポーズがパーであった場合は瞬時にマウス移動を実行し、処理を終了する
         # autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
-        pointerMove(x,y)
+
         # poseCount=[0,0,0,0,0,0]#ドラッグ動作をさせるポーズの名前番地のカウントを０clear。ドラックのカウントclearで必要。
         # return poseCount
 
     if(poseName=="Dang"):
-        pointerMove(x,y)
+        pointerMoveDang(x,y)
 
     for tmp in Namelist:#
         if(Namelist[i]!=poseName and poseName!="Garbage"):#ゴミのインデントをスキップする
@@ -35,7 +35,6 @@ def checkPose(x, y,Namelist,poseName,poseCount):#識別が7割超えたポーズ
                             pose_Click_right()
                         if(str(Namelist[i])=="Three"):
                             poseCount=[0,0,0,0,0,0]
-                            pose_doubleClick_left()
                         if(str(Namelist[i])=="Palm"):
                             poseCount=[0,0,0,0,0,0]
                             autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
@@ -78,12 +77,61 @@ def pointerMove(x,y):
         abs_y = history_y-y
         if(abs(abs_x)>20 or abs(abs_y)>20):
             i = 1
-            for i in range(10):
-                autopy.mouse.move(history_x-(abs_x//10)*i,history_y-(abs_y//10)*i)
+            for i in range(20):
+                autopy.mouse.move(history_x-(abs_x//20)*i,history_y-(abs_y//20)*i)
                 time.sleep(0.0001)
                 # autopy.mouse.move(x,y)
             # autopy.mouse.move(x,y)
         #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
 
+    except Exception as e:
+        print(e)
+
+def pointerMoveDang(x,y):
+    history_x,history_y = autopy.mouse.location()
+    try:
+
+        abs_x = history_x-x
+        abs_y = history_y-y
+
+        if(abs(abs_x)>30 or abs(abs_y)>30):
+
+            i = 1
+            for i in range(20):
+                autopy.mouse.move(history_x-(abs_x//20)*i,history_y-(abs_y//20)*i)
+                time.sleep(0.0001)
+
+    except Exception as e:
+        print(e)
+
+#テスト　のち削除
+def pointerMove2(x,y):
+    history_x,history_y = autopy.mouse.location()
+    try:
+
+        abs_x = history_x-x
+        abs_y = history_y-y
+
+        if(abs(abs_x)>50 or abs(abs_y)>50):
+
+            i = 1
+            for i in range(30):
+                autopy.mouse.move(history_x-(abs_x//30)*i,history_y-(abs_y//30)*i)
+                time.sleep(0.00001)
+
+
+        if(abs(abs_x)>20 and abs(abs_y)<30):
+            print('xmove')
+            k = 1
+            for k in range(5):
+                autopy.mouse.move(history_x-(abs_x//5)*k,history_y)
+                time.sleep(0.0001)
+
+        if(abs(abs_x)<30 and abs(abs_y)>20):
+            print('ymove')
+            j = 1
+            for j in range(5):
+                autopy.mouse.move(history_x,history_y-(abs_y//5)*j)
+                time.sleep(0.0001)
     except Exception as e:
         print(e)
