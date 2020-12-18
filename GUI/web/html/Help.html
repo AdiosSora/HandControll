@@ -1,74 +1,85 @@
-<!DOCTYPE html>
+<!DOCTYPE>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>ヘルプ</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="../css/style.min.css">
-<link rel="stylesheet" type="text/css" href="../css/pure.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript" src="/eel.js"></script>
+  <script src ="../js/Recognize.js"></script>
+  <link rel="stylesheet" type="text/css" href="../css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../css/pure.css">
 </head>
-  <header>
-      <div class="pure-g">
-        <div class="pure-u-1-5" style="text-align:center;">
-            <img src="../images/FOCUS-Logo.svg" width="220px">
-        </div>
-        <div class="pure-u-4-5" style="text-align:right;">
-          <a class="pure-button" onclick="link('Help.html')">使い方</a>
-          <a class="pure-button pure-button-primary" href="Help.html">起動</a>
-        </div>
-      </div>
-  </header>
+<header>
+  <div class="pure-g">
+    <div class="pure-u-1-5" style="text-align:center;">
+        <a onclick="link('Start.html')"><img src="../images/FOCUS-Logo.svg" width="220px"></a>
+    </div>
+    <div class="pure-u-4-5" style="text-align:right;">
+      <a class="pure-button" onclick="link('Start.html')">閉じる</a>
+      <a class="pure-button" onclick="link('Help.html')">使い方</a>
+      <a class="pure-button pure-button-primary" onclick="link('Recognize.html')">起動</a>
+    </div>
+  </div>
+</header>
+
 <body>
   <div class="pure-g">
     <div class="pure-u-1-5 side-menu">
       <div class="pure-menu">
-          <ul class="pure-menu-list">
-              <li class="pure-menu-item">
-                  <a onclick="link('Start.html')" class="pure-menu-link"><img src="../images/home.svg" width="22px">トップ</a>
-              </li>
-              <li class="pure-menu-item">
-                  <a href="#" class="pure-menu-link"><img src="../images/gear.svg" width="22px" style="padding:0 5px;">設定</a>
-              </li>
-              <li class="pure-menu-item">
-                  <a href="#" class="pure-menu-link">動作テスト</a>
-              </li>
-          </ul>
+        <ul class="pure-menu-list">
+          <li class="pure-menu-item">
+            <a class="pure-menu-link" onclick="link('Start.html')"><img src="../images/home.svg" width="22px">トップ</a>
+          </li>
+          <li class="pure-menu-item">
+            <a href="#" class="pure-menu-link"><img src="../images/gear.svg" width="22px" style="padding:0 5px;">設定</a>
+          </li>
+          <li class="pure-menu-item">
+            <a href="#" class="pure-menu-link">動作テスト</a>
+          </li>
+
+        </ul>
       </div>
     </div>
-    <div class="pure-u-4-5 main-content"><h1 align="center">ヘルプ画面</h1>
-      <table>
-        <tr align="center">
-          <th>No</th>
-          <th>Name</th>
-          <th>Pose</th>
-          <th>Do</th>
-        </tr>
-        <tr align="center">
-          <td>1</td>
-          <td>パー</td>
-          <td><img src="image/poses/palm.png"></td>
-          <td>カーソル移動</td>
-        </tr>
-        <tr align="center">
-          <td>2</td>
-          <td>グー</td>
-          <td><img src="image/poses/dang.png"></td>
-          <td>左クリック</td>
-        </tr>
-        <tr align="center">
-          <td>3</td>
-          <td>グー(保持)</td>
-          <td><img src="image/poses/dang_dang.png"></td>
-          <td>ドラッグ</td>
-        </tr>
-        <tr align="center">
-          <td>4</td>
-          <td>グーからパー</td>
-          <td><img src="image/poses/dang_palm.png"></td>
-          <td>ドロップ</td>
-        </tr>
-      </table>
+    <div class="pure-u-4-5 main-content">
+     <table>
+          <tr align="center">
+            <th>No</th>
+            <th>Name</th>
+            <th>Pose</th>
+            <th>Do</th>
+          </tr>
+          <tr align="center">
+            <td>1</td>
+            <td>パー</td>
+            <td><img src="../images/Hand_Palm.svg"></td>
+            <td>カーソル移動</td>
+          </tr>
+          <tr align="center">
+            <td>2</td>
+            <td>グー</td>
+            <td><img src="../images/Hand_Palm.svg"></td>
+            <td>左クリック</td>
+          </tr>
+          <tr align="center">
+            <td>3</td>
+            <td>グー(保持)</td>
+            <td><img src="../images/Hand_Palm.svg"></td>
+            <td>ドラッグ</td>
+          </tr>
+          <tr align="center">
+            <td>4</td>
+            <td>グーからパー</td>
+            <td><img src="../images/Hand_Palm.svg"></td>
+            <td>ドロップ</td>
+          </tr>
+        </table>
     </div>
   </div>
 </body>
+<footer></footer>
+
 </html>
+<script>
+  function link(target) {
+    window.location.href = target;
+  }
+</script>
