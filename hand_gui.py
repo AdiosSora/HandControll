@@ -82,3 +82,13 @@ def cam_source():
     num = eel.js_function()()
     print(num)
     return int(num)
+
+def connect_cam(flg_start, flg_video):
+    print("カメラ非接続画面出すよ！！")
+    if(flg_start == 0):
+        eel.init('GUI/web/html')
+        eel.start('connect.html',block=False)
+        flg_start = 1
+    if(flg_video == 0):
+        eel.windowclose()
+    return flg_start, flg_video

@@ -139,6 +139,7 @@ if __name__ == '__main__':
                     flg_video = 0
                     cnt_gui = 0
                     flg_restart = 1
+                    #flg_start, flg_video = hand_gui.connect_cam(flg_start, flg_video)
                     print("webcamあったよ！！")
                     continue    #最初の while に戻る
                 else:
@@ -307,6 +308,7 @@ if __name__ == '__main__':
                     except NameError as name_e:
                         traceback.print_exc()
                         flg_start = 1
+                        #flg_start, flg_video = hand_gui.connect_cam(flg_start, flg_video)  #handgui の関数に eel で connect.html 起動がうまくいかない
                         print("webcam接続して！！！！")
                     pool.terminate()
                     video_capture.stop()
