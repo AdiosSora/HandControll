@@ -127,21 +127,29 @@ if __name__ == '__main__':
     flg_start = 0   #「1」で開始時点でのカメラ消失
     cnt_gui=0   #hand_guiにてeelを動かす用に使用（0:初回起動時、1:2回目以降起動時、2:カメラが切断された際にhtmlを閉じるために使用）
 
+    width,height = autopy.screen.size()
+
     while(True):    #カメラが再度接続するまでループ処理
         #try:
             #カメラが接続されていないフラグの場合
             if(flg_video == 1):
-                #if(cnt_gui == 2):
-                    #el.init('GUI/web')
-                    #eel.start(
-                    #'html/connect.html',
-                    #     mode='chrome',
-                    #    cmdline_args=['--start-fullscreen'],
-                    #    block=False)
-                    #cnt_gui = 0
-                    #print("connect 接続しているよ！！")
-                    #time.sleep(5)
-                #eel.sleep(0.01)
+
+                if(cnt_gui == 2):
+
+                    eel.init('GUI/web')
+                    eel.start('html/connect.html',
+                                mode='chrome',
+                                size=(500,600),  #サイズ指定（横, 縦）
+                                position=(width/2-250, height/2-300), #位置指定（left, top）
+                                block=False)
+                    cnt_gui = 0
+                    print("connect 接続しているよ！！")
+                try:
+                    eel.sleep(0.01)
+                except:
+                    print("エラー発生！！！！")
+                    traceback.print_exc()
+                    continue
                 #カメラが接続されているか確認
                 cap2 = cv2.VideoCapture(0)
                 ret2, frame2 = cap2.read()
@@ -150,9 +158,8 @@ if __name__ == '__main__':
                     flg_video = 0
                     cnt_gui = 0
                     flg_restart = 1
-                    #flg_start, flg_video = hand_gui.connect_cam(flg_start, flg_video)
                     print("webcamあったよ！！")
-                    #eel.windowclose()
+                    eel.windowclose()
                     continue    #最初の while に戻る
                 else:
                 #カメラが接続されていない場合
@@ -321,7 +328,6 @@ if __name__ == '__main__':
                     except NameError as name_e:
                         traceback.print_exc()
                         flg_start = 1
-                        #flg_start, flg_video = hand_gui.connect_cam(flg_start, flg_video)  #handgui の関数に eel で connect.html 起動がうまくいかない
                         print("webcam接続して！！！！")
                     pool.terminate()
                     video_capture.stop()
@@ -477,3 +483,15 @@ if __name__ == '__main__':
     pool.terminate()
     video_capture.stop()
     cv2.destroyAllWindows()
+    eel.init("GUI/web")
+    eel.start("html/start.html",
+                mode='chrome',
+                size=(960,540),  #サイズ指定（横, 縦）
+                position=(width-480,height-270), #位置指定（left, top）
+                block=False
+                )
+    i=0
+    while(i<1000):
+        eel.sleep(0.01)
+        i+=1
+    print("終了後、トップ画面へ")
