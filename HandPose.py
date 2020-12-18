@@ -294,6 +294,7 @@ if __name__ == '__main__':
 
             cv2.namedWindow('Handpose', cv2.WINDOW_NORMAL)
             poseCount = [0,0,0,0,0,0,0]
+            moveCount = [0,0,0,0]
 
             #cnt_gui=0   #hand_guiにてeelを動かす用に使用
             cnt_pose=0  #
@@ -395,13 +396,13 @@ if __name__ == '__main__':
                     #worker関数内のp1,p2の値を代入
                     x = pointX_q.get_nowait()
                     y = pointY_q.get_nowait()
-                    gui.drawInferences(inferences,poseCount, poses)
+                    gui.drawInferences(inferences, poses)
                     #ポーズの形の信頼地が0.7を超えたらアクションを実行する
                     for i in range(len(poses)):
                         if(inferences[2] > 0.9):
-                            PoseAction.pointerMove2(x,y)
+                            moveCount = PoseAction.pointerMove2(x,y,moveCount)
                         if(inferences[i] > 0.7):
-                            poseCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount)#testに7割越え識別したポーズの名称が代入される。
+                            poseCount,moveCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount,moveCount)#testに7割越え識別したポーズの名称が代入される。
                             cnt_pose = poseCount[i] #全ポーズのゲージを取得したい場合は[i]を外す
                             name_pose = poses[i]
                 if (cropped_output is not None):
