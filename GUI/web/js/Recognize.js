@@ -12,6 +12,12 @@
       eel.py_sysclose();
       window.close();
     }
+
+    eel.expose(windowclose)
+    function windowclose(){
+      window.close();
+    }
+    
     /*
     function window.onbeforeunload(){
       eel.py_sysclose();
@@ -50,3 +56,20 @@
       target4.innerHTML = cnt_pose[4] + '回，Rock<meter max= "100" min= "0" low= "20" high= "80" optimum= "90" value= ' + cnt_pose[4] +'></meter>';
       */
     }
+
+    /*ここから試作用、不要になったら削除*/
+        /*eel.expose(test_clickBtn1);*/
+        function test_clickBtn1(){
+          /*起動(テスト用ボタン)押下時*/
+          eel.start_flg();
+          window.close();
+        }
+
+        /*eel.expose(test_clickBtn2);*/
+        function test_clickBtn2(){
+          /*終了(テスト用ボタン)押下時*/
+          eel.end_flg();
+          window.close();
+        }
+
+    /*ここまで試作用、不要になったら削除*/

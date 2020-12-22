@@ -119,15 +119,15 @@ def worker(input_q, output_q, cropped_output_q, inferences_q, pointX_q, pointY_q
             output_q.put(frame)
     sess.close()
 
-
-if __name__ == '__main__':
+def HandPose_main(keep_flg):    #別ファイルから HandPose.py を動かすと if __name__ == '__main__': が動かないっぽいので、関数で代用
+#if __name__ == '__main__':
     flg_video = 0   #「1」でカメラが接続されていない
     flg_break = 0   #「1」で最初のループを抜け終了する⇒正常終了
     flg_restart = 0 #「1」でリスタートした際に hand_gui.py で eel が2度起動するのを防ぐ
     flg_start = 0   #「1」で開始時点でのカメラ消失
     cnt_gui=0   #hand_guiにてeelを動かす用に使用（0:初回起動時、1:2回目以降起動時、2:カメラが切断された際にhtmlを閉じるために使用）
 
-    width,height = autopy.screen.size()
+    width,height = autopy.screen.size() #eel で立ち上げた際の表示位置を指定するために取得
 
     while(True):    #カメラが再度接続するまでループ処理
         #try:
@@ -325,7 +325,7 @@ if __name__ == '__main__':
                     cnt_gui = 2
                     try:
                         #webcam が最初から接続されていない場合は except の動作
-                        cnt_gui, flg_end, flg_restart, flg_start = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart, flg_start)
+                        cnt_gui, flg_end, flg_restart, flg_start, keep_flg = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart, flg_start, keep_flg)
                     except NameError as name_e:
                         traceback.print_exc()
                         flg_start = 1
@@ -385,7 +385,7 @@ if __name__ == '__main__':
                 #hand_gui.start_gui(output_frame)
                 output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
                 #output_qの内容表示するためにhand_gui.start_guiへ
-                cnt_gui, flg_end, flg_restart, flg_start = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart, flg_start)
+                cnt_gui, flg_end, flg_restart, flg_start, keep_flg = hand_gui.start_gui(output_frame, cnt_gui, cnt_pose, name_pose, flg_restart, flg_start,keep_flg)
 
                 inferences      = None
 
@@ -484,15 +484,3 @@ if __name__ == '__main__':
     pool.terminate()
     video_capture.stop()
     cv2.destroyAllWindows()
-    eel.init("GUI/web")
-    eel.start("html/start.html",
-                mode='chrome',
-                size=(960,540),  #サイズ指定（横, 縦）
-                position=(width-480,height-270), #位置指定（left, top）
-                block=False
-                )
-    i=0
-    while(i<1000):
-        eel.sleep(0.01)
-        i+=1
-    print("終了後、トップ画面へ")
