@@ -2,9 +2,14 @@ import eel
 import traceback
 import HandPose
 import cv2
+import win32gui, win32con
 
 start_flg = 0   #HandPose.py の開始フラグ、「1」で開始
 end_flg = 0 #システム終了のフラグ、「1」で終了
+
+#コンソールを消すときはここのコメントアウトを消してください。
+#The_program_to_hide = win32gui.GetForegroundWindow()
+#win32gui.ShowWindow(The_program_to_hide , win32con.SW_HIDE)
 
 @eel.expose
 def start_flg():
