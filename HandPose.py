@@ -408,7 +408,7 @@ def HandPose_main(keep_flg):    #別ファイルから HandPose.py を動かす�
                     #ポーズの形の信頼地が0.7を超えたらアクションを実行する
                     for i in range(len(poses)):
                         if(inferences[2] > 0.9):
-                            moveCount = PoseAction.pointerMove2(x,y,moveCount)
+                            moveCount = PoseAction.pointerMove(x,y,moveCount)
                         if(inferences[i] > 0.7):
                             poseCount,moveCount = PoseAction.checkPose(x, y, poses,poses[i],poseCount,moveCount)#testに7割越え識別したポーズの名称が代入される。
                             cnt_pose = poseCount[i] #全ポーズのゲージを取得したい場合は[i]を外す

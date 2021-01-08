@@ -76,23 +76,23 @@ def pose_Drop():
     #autopy.mouse.toggle(autopy.mouse.Button.LEFT,False)
     #l=0
 #ポインターの移動
-def pointerMove2(x,y,moveCount):
+def pointerMove(x,y,moveCount):
     history_x,history_y = autopy.mouse.location()
 
     #前回座標との差を算出
     abs_x = history_x-x
     abs_y = history_y-y
     #差が一定値大きかった場合のみ座標の移動を行う
-    if(abs(abs_x)>75 or abs(abs_y)>75):
+    if(abs(abs_x)>70 or abs(abs_y)>70):
         #値が超えても1回目の移動は無視する
         moveCount[1]+=1
         if(moveCount[1]>1):
             i = 1
             moveCount[1]=0
             #中点の算出および移動
-            for i in range(30):
+            for i in range(25):
                 try:
-                    autopy.mouse.move(history_x-(abs_x//30)*i,history_y-(abs_y//30)*i)
+                    autopy.mouse.move(history_x-(abs_x//25)*i,history_y-(abs_y//25)*i)
                 except Exception as e:
                     print(e)
                 time.sleep(0.00001)
@@ -105,6 +105,7 @@ def pointerMove2(x,y,moveCount):
                 try:
                     for i in range(5):
                         autopy.mouse.move(history_x-(abs_x//5)*i,history_y-(abs_y//5)*i)
+                        time.sleep(0.00001)
                 except Exception as e:
                     print(e)
                 moveCount[0] = 0
